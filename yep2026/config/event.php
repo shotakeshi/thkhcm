@@ -41,12 +41,12 @@ return [
         'dress_code_colors' => ['#701b1b', '#b39d2b', '#FFFFFF', '#171717'],
         // key: tên mốc ở lang/ (program.items.{key}); tên mốc để trống => ẩn mốc đó
         'schedule'          => [
-            ['time' => '18:00', 'key' => 'reception'],
-            ['time' => '18:30', 'key' => 'opening'],
+            ['time' => '17:30', 'key' => 'reception'],
+            ['time' => '18:00', 'key' => 'opening'],
             ['time' => '19:00', 'key' => 'dinner'],
             ['time' => '20:00', 'key' => 'performances'],
-            ['time' => '21:00', 'key' => 'lucky_draw'],
-            ['time' => '21:30', 'key' => 'farewell'],
+            ['time' => '20:30', 'key' => 'lucky_draw'],
+            ['time' => '21:00', 'key' => 'farewell'],
         ],
     ],
 ];

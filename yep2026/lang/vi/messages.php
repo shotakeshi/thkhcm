@@ -118,12 +118,12 @@ return [
         'palette_label'    => 'Bảng màu trang phục',
         // Để trống một mốc => ẩn mốc đó
         'items' => [
-            'reception'    => 'Đón khách',
-            'opening'      => 'Khai mạc',
-            'dinner'       => 'Tiệc tối',
-            'performances' => 'Chương trình văn nghệ',
-            'lucky_draw'   => 'Bốc thăm may mắn',
-            'farewell'     => 'Kết thúc chương trình',
+            'reception'    => 'Đón khách & check-in',
+            'opening'      => 'Khai mạc & chương trình đặc biệt',
+            'dinner'       => 'Tiệc tối & giao lưu',
+            'performances' => 'Chương trình tri ân & ghi nhận',
+            'lucky_draw'   => 'Bốc thăm may mắn – Lucky Draw',
+            'farewell'     => 'Bế mạc & kết thúc',
         ],
     ],
 

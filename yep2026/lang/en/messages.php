@@ -99,12 +99,12 @@ return [
         'dress_code_note'  => '',
         'palette_label'    => 'Dress code color palette',
         'items' => [
-            'reception'    => 'Guest Arrival',
-            'opening'      => 'Opening Ceremony',
-            'dinner'       => 'Dinner',
-            'performances' => 'Entertainment',
-            'lucky_draw'   => 'Lucky Draw',
-            'farewell'     => 'Closing',
+            'reception'    => 'Guest arrival & check-in',
+            'opening'      => 'Opening ceremony & special program',
+            'dinner'       => 'Dinner & networking',
+            'performances' => 'Appreciation & recognition',
+            'lucky_draw'   => 'Lucky draw',
+            'farewell'     => 'Closing ceremony',
         ],
     ],
 
