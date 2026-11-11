@@ -1,0 +1,155 @@
+/* ===== Landing một trang: seam giữa các section, chuyển tiếp hai đầu ===== */
+/* Reveal chung ([data-reveal]) và token --reveal-* nằm ở recap.css/theme.css. File này nạp sau cùng. */
+
+:root {
+    /* Khai báo ở :root để nền thiệp PC (invite.css) tan mép đúng bằng phần seam chồng lên */
+    --seam-h: clamp(120px, 22vh, 220px);
+}
+
+/* Seam: dải chuyển tiếp chồng lên hai section liền kề (margin âm bằng nửa chiều cao => không chiếm chỗ).
+   Trong suốt: nền là lớp chung của trang (theme.css), seam chỉ mang sợi chỉ vàng và vài hạt sáng nối hai đoạn câu chuyện. */
+.seam {
+    position: relative;
+    z-index: 3;
+    height: var(--seam-h);
+    margin-block: calc(var(--seam-h) / -2);
+    pointer-events: none;
+}
+
+/* Sợi chỉ vàng: story.js đặt --seam-p (0-1) theo vị trí seam trong khung nhìn */
+.seam-thread {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(transparent, var(--color-primary) 18%, var(--color-primary) 82%, transparent);
+    opacity: .85;
+    transform: scaleY(var(--seam-p, 0));
+    transform-origin: top;
+}
+
+/* Hạt vàng dùng lại .particle và @keyframes drift (invite.css); chỉ chạy khi seam trong khung nhìn */
+.seam-particle {
+    animation-play-state: paused;
+}
+
+.seam.is-live .seam-particle {
+    animation-play-state: running;
+}
+
+/* Chuyền tay hai đầu: phần cuối section trên mờ còn ~60% và dịch lên tối đa 16px khi seam đi qua;
+   phần đầu section dưới reveal trễ ~0,15s sau khi sợi chỉ chạm tới. story.js gắn .seam-before/.seam-after và --seam-out. */
+.seam-before :is(.stage, .rsvp-wrap, .closing-inner) {
+    opacity: calc(1 - var(--seam-out, 0) * .4);
+    transform: translateY(calc(var(--seam-out, 0) * -16px));
+}
+
+.js .seam-after [data-reveal] {
+    transition-delay: calc(.15s + var(--d, 0) * var(--reveal-stagger));
+}
+
+/* Điện thoại: 3 hạt thay vì 6 (con thứ 1 là .seam-thread) */
+@media (max-width: 640px) {
+    .seam-particle:nth-child(n+5) {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .seam-thread {
+        transform: none;
+    }
+
+    .seam-particle {
+        display: none;
+    }
+
+    .seam-before :is(.stage, .rsvp-wrap, .closing-inner) {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ===== Ánh sáng chủ đạo: một lớp cố định giữa nền (body::before) và nội dung =====
+   Nắng sớm champagne (palette ở theme.css) xuyên chéo từ góc trên phải (::before: tia khuếch tán, ::after: quầng sáng).
+   Hai trạng thái, story.js đặt data-light trên <html>: mặc định "dawn" (ngoài vùng nội dung) mờ, gọn ở góc trên;
+   "light" (đang xem Recap) tia rõ hơn, quầng lan xuống giữa. Chỉ đổi opacity/transform => chuyển mềm, không tốn layout.
+   Cường độ và thời lượng: --page-dawn-opacity, --page-light-opacity, --page-bg-transition (theme.css). */
+.dawn {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+.dawn::before,
+.dawn::after {
+    content: "";
+    position: absolute;
+    opacity: var(--page-dawn-opacity);
+    transition: opacity var(--page-bg-transition), transform var(--page-bg-transition);
+}
+
+.dawn::before {
+    top: 0;
+    left: -30%;
+    width: 160%;
+    height: 115%;
+    background: conic-gradient(from 172deg at 78% -45%,
+        transparent 0deg,
+        color-mix(in srgb, var(--gold-light) 26%, transparent) 3deg, transparent 6deg,
+        transparent 9deg, color-mix(in srgb, var(--gold-champagne) 16%, transparent) 12deg, color-mix(in srgb, var(--gold-champagne) 12%, transparent) 16deg, transparent 20deg,
+        color-mix(in srgb, var(--gold-light) 30%, transparent) 23deg, transparent 26deg,
+        color-mix(in srgb, var(--gold-champagne) 14%, transparent) 31deg, transparent 37deg,
+        color-mix(in srgb, var(--gold-light) 22%, transparent) 41deg, transparent 44deg,
+        transparent 47deg, color-mix(in srgb, var(--gold-champagne) 15%, transparent) 51deg, transparent 57deg,
+        color-mix(in srgb, var(--gold-light) 20%, transparent) 60deg, transparent 63deg,
+        color-mix(in srgb, var(--gold-champagne) 12%, transparent) 67deg, transparent 74deg);
+    -webkit-mask-image: linear-gradient(#000, rgba(0, 0, 0, .5) 45%, transparent 90%);
+    mask-image: linear-gradient(#000, rgba(0, 0, 0, .5) 45%, transparent 90%);
+    filter: blur(18px);
+    transform: translateY(-8%) scaleY(.9);
+    transform-origin: 78% 0;
+}
+
+/* Quầng khuếch tán: champagne ở nguồn sáng, vàng trầm (antique) lan rất nhẹ xuống giữa => không đẩy nền sang vàng */
+.dawn::after {
+    inset: 0;
+    background:
+        radial-gradient(ellipse 55% 45% at 78% 0, color-mix(in srgb, var(--gold-champagne) 22%, transparent), transparent 70%),
+        radial-gradient(ellipse 80% 55% at 55% 45%, color-mix(in srgb, var(--gold-antique) 10%, transparent), transparent 75%);
+    transform: translateY(-10%);
+}
+
+[data-light="light"] .dawn::before,
+[data-light="light"] .dawn::after {
+    opacity: var(--page-light-opacity);
+    transform: none;
+}
+
+/* Nắng lên chậm khi lớp giấy rời (không bật kiểu đèn sân khấu); tia khẽ lay như tán lá */
+@media (prefers-reduced-motion: no-preference) {
+    .dawn {
+        animation: dawn-rise 1.5s .2s ease-out both;
+    }
+
+    .dawn::before {
+        animation: dawn-sway 24s ease-in-out infinite alternate;
+    }
+}
+
+.is-waiting .dawn {
+    animation-play-state: paused;
+}
+
+@keyframes dawn-rise {
+    from { opacity: 0; }
+}
+
+@keyframes dawn-sway {
+    from { rotate: -1deg; }
+    to { rotate: 1deg; }
+}

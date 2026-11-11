@@ -1,0 +1,10 @@
+
+RewriteEngine On
+
+# Nếu file hoặc thư mục tồn tại thì phục vụ trực tiếp
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Các URL còn lại chạy qua index.php
+RewriteRule ^ index.php [QSA,L]
