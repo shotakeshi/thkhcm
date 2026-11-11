@@ -1,0 +1,12 @@
+
+Options -Indexes
+RewriteEngine On
+
+# Nếu request đã trỏ vào public thì không rewrite lại
+RewriteRule ^public/ - [L]
+
+# Chuyển trang chủ vào public/index.php
+RewriteRule ^$ public/index.php [END]
+
+# Chuyển các URL còn lại vào public
+RewriteRule ^(.+)$ public/$1 [END]
