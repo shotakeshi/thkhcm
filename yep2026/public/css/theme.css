@@ -253,6 +253,7 @@ body {
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
     /* Trục của Fraunces (bo mềm nét chữ). Kế thừa xuống mọi phần tử; font body/script là font tĩnh nên bỏ qua. */
+    /* URL Google Fonts (views/partials/head.php) ghim sẵn SOFT 100, WONK 1 để file font nhẹ ~50%; đổi giá trị ở đây thì đổi cả URL đó. */
     font-variation-settings: 'SOFT' 100, 'WONK' 1;
 }
 

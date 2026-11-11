@@ -1,7 +1,6 @@
 <?php
 
-
-require_once dirname(__DIR__) . '/bootstrap.php';
+require dirname(__DIR__) . '/bootstrap.php';
 
 $event = loadEvent();
 $id = $_GET['id'] ?? '';
@@ -9,7 +8,7 @@ $employee = null;
 $rsvp = null;
 $noticeUnavailable = false;
 
-// Có id => phải là link mời hợp lệ (khách data.json hoặc khách tự đăng ký đã RSVP);
+// Có id => phải là uuid có trong data.json (khách có sẵn hoặc khách tự đăng ký);
 // không có id => thiệp chung với form tự đăng ký và tra cứu vé
 if ($id !== '') {
     try {

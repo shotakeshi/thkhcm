@@ -1,16 +1,20 @@
 {
-  "c3e7b7e9-d813-40bd-bd8f-53421235f6f1": {
-    "email": "thangphamit97@gmail.com",
-    "name": "Phạm Quốc Thắng",
-    "position": "1",
-    "luckyDrawCode": "YEP26-11",
-    "tableNumber": "01"
-  },
-  "bc9a5ca5-be50-496c-9a8b-45d603ca0796": {
-    "email": "p_quocthang@thk-hd.vn",
-    "name": "Hà Anh Hiếu",
-    "position": "1",
-    "luckyDrawCode": "YEP26-21",
-    "tableNumber": "02"
-  }
+    "c3e7b7e9-d813-40bd-bd8f-53421235f6f1": {
+        "guestType": "0",
+        "name": "Phạm Quốc Thắng",
+        "email": "p_quocthang@thk-hd.vn",
+        "luckyDrawCode": "YEP26-1111",
+        "tableNumber": "01",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "bc9a5ca5-be50-496c-9a8b-45d603ca0796": {
+        "guestType": "0",
+        "name": "Hà Anh Hiếu",
+        "email": "h_anhhieu@thk-hd.vn",
+        "luckyDrawCode": "YEP26-2103",
+        "tableNumber": "02",
+        "attendance": null,
+        "submittedAt": null
+    }
 }

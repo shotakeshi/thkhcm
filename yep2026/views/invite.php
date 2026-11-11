@@ -5,7 +5,8 @@ $rsvpNotice ??= null;
 $lookupCardHtml ??= null;
 $opened ??= false;
 
-$pageTitle = "Thiệp mời {$event['title']}";
+$pageTitleKey = 'meta.title';
+$pageTitleArgs = ['event' => $event['title']];
 $uuid = $employee !== null ? employeeUuid($employee) : null;
 $stylesheets = ['theme', 'invite', 'recap', 'rsvp', 'story', 'lightbox'];
 
@@ -22,9 +23,10 @@ $weekdayLabel = $invite['weekday_label'] !== ''
     ? $invite['weekday_label']
     : strtoupper($eventDate->format('l'));
 $dayLabel = (string) (int) $event['day'];
+$locationLabel = trim(message('invite.location_label'));
 ?>
 <!doctype html>
-<html lang="vi"<?= $opened ? ' data-opened' : '' ?>>
+<html lang="<?= e(locale()) ?>"<?= $opened ? ' data-opened' : '' ?>>
 <head>
     <?php require __DIR__ . '/partials/head.php'; ?>
     <script>
@@ -96,6 +98,8 @@ $dayLabel = (string) (int) $event['day'];
     </script>
 </head>
 <body>
+<?php require __DIR__ . '/partials/lang-switch.php'; ?>
+
 <div class="tear-cover">
     <canvas class="tear-canvas" aria-hidden="true"></canvas>
     <div class="tear-hint">
@@ -116,8 +120,8 @@ $dayLabel = (string) (int) $event['day'];
                 <path d="M15 10.5a1.5 1.5 0 0 1 3 0v3.5a6 6 0 0 1-6 6h-.6a5 5 0 0 1-3.9-1.9L5 14.7a1.5 1.5 0 0 1 2.3-1.9L9 14.5"/>
             </svg>
         </div>
-        <div class="tear-hint-text">Vuốt xuống để mở thiệp</div>
-        <button class="tear-btn" type="button">Hoặc nhấn để mở</button>
+        <?php // motion.js đổi khoá theo thiết bị (vuốt / kéo / nhấn) ?>
+        <div class="tear-hint-text"<?= i18n('cover.hint_swipe') ?>><?= e(message('cover.hint_swipe')) ?></div>
     </div>
 </div>
 
@@ -137,8 +141,14 @@ $dayLabel = (string) (int) $event['day'];
                     style="background-image: url('<?= e($invite['background_desktop']) ?>')"
                 <?php endif; ?>
             >
+                <?php
+                // Video nền có hai bản: .page-bg này (chỉ hiện ≤640px) và .card-bg-pc (chỉ hiện ≥641px).
+                // media trên <source> để chỉ bản đang hiện tải file; motion.js nạp lại khi đổi breakpoint.
+                ?>
                 <?php if (isVideoAsset($invite['background_desktop'])): ?>
-                    <video class="bg-video" src="<?= e($invite['background_desktop']) ?>" autoplay muted loop playsinline></video>
+                    <video class="bg-video" autoplay muted loop playsinline>
+                        <source src="<?= e($invite['background_desktop']) ?>" media="(max-width: 640px)">
+                    </video>
                 <?php endif; ?>
             </div>
         <?php elseif ($invite['background'] !== ''): ?>
@@ -168,7 +178,9 @@ $dayLabel = (string) (int) $event['day'];
                                 <?php endif; ?>
                             >
                                 <?php if (isVideoAsset($invite['background_desktop'])): ?>
-                                    <video class="bg-video" src="<?= e($invite['background_desktop']) ?>" autoplay muted loop playsinline></video>
+                                    <video class="bg-video" autoplay muted loop playsinline>
+                                        <source src="<?= e($invite['background_desktop']) ?>" media="(min-width: 641px)">
+                                    </video>
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
@@ -205,8 +217,8 @@ $dayLabel = (string) (int) $event['day'];
                     </div>
 
                     <div class="card-where iv intro" style="--d: 3">
-                        <?php if ($invite['location_label'] !== ''): ?>
-                            <div class="card-label"><?= e($invite['location_label']) ?></div>
+                        <?php if ($locationLabel !== ''): ?>
+                            <div class="card-label"<?= i18n('invite.location_label') ?>><?= e($locationLabel) ?></div>
                         <?php endif; ?>
                         <?php if ($event['venue_name'] !== ''): ?>
                             <div class="card-name"><?= e($event['venue_name']) ?></div>
@@ -245,13 +257,22 @@ $dayLabel = (string) (int) $event['day'];
 
 <?php require __DIR__ . '/partials/recap.php'; ?>
 
-<?= renderPartial('seam.php') ?>
+<?php
+// RSVP_ENABLED=false: ẩn form xác nhận và tra cứu vé; slot #ve (vé của khách đã xác nhận) vẫn giữ
+// và tự dựng seam phía trên nên không cần seam nối riêng ở đây
+$rsvpEnabled = isRsvpEnabled();
+?>
+<?php if ($rsvpEnabled): ?>
+    <?= renderPartial('seam.php') ?>
+<?php endif; ?>
 
 <div class="scene">
-    <?php require __DIR__ . '/partials/rsvp.php'; ?>
-    <?php if ($employee === null): ?>
-        <?= renderPartial('seam.php') ?>
-        <?php require __DIR__ . '/partials/find-ticket.php'; ?>
+    <?php if ($rsvpEnabled): ?>
+        <?php require __DIR__ . '/partials/rsvp.php'; ?>
+        <?php if ($employee === null): ?>
+            <?= renderPartial('seam.php') ?>
+            <?php require __DIR__ . '/partials/find-ticket.php'; ?>
+        <?php endif; ?>
     <?php endif; ?>
     <div id="ve" data-ticket-slot>
         <?= renderPartial('ticket-slot.php', [
@@ -270,6 +291,7 @@ $dayLabel = (string) (int) $event['day'];
     <?php require __DIR__ . '/partials/ticket-overlays.php'; ?>
 <?php endif; ?>
 
+<?php require __DIR__ . '/partials/i18n-script.php'; ?>
 <script src="<?= asset('js/motion.js') ?>"></script>
 <script src="<?= asset('js/recap.js') ?>"></script>
 <script src="<?= asset('js/story.js') ?>"></script>

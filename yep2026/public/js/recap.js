@@ -1,50 +1,14 @@
-// ===== Landing "A Year to Remember": chương đang xem, album =====
+// ===== Landing "A Year to Remember": album =====
 // Ánh sáng nền theo vùng cuộn (dawn/light) nằm ở story.js.
 // Thời lượng/easing của hiệu ứng nằm trong css/recap.css. File này chỉ gắn trạng thái và giá trị theo vị trí cuộn.
 (function () {
     'use strict';
 
     const RECAP = {
-        activeLine: .45,      // chương đang xem = chương có mép trên vượt 45% chiều cao màn hình
         swingMs: 1200,        // một nhịp đung đưa của ảnh trên dây (≥ thời lượng album-swing trong recap.css)
     };
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // ===== Chương đang xem theo vị trí cuộn =====
-    function initScroll() {
-        const chapters = [...document.querySelectorAll('[data-chapter]')];
-
-        let active = null;
-        let queued = false;
-
-        const update = () => {
-            queued = false;
-            const vh = window.innerHeight;
-
-            let current = chapters[0];
-            chapters.forEach((ch) => {
-                if (ch.getBoundingClientRect().top <= vh * RECAP.activeLine) {
-                    current = ch;
-                }
-            });
-
-            if (current !== active) {
-                active = current;
-            }
-        };
-
-        const request = () => {
-            if (!queued) {
-                queued = true;
-                requestAnimationFrame(update);
-            }
-        };
-
-        window.addEventListener('scroll', request, {passive: true});
-        window.addEventListener('resize', request);
-        update();
-    }
 
     // ===== Album khoảnh khắc: nút trước/sau + kéo bằng chuột =====
     function initAlbum() {
@@ -104,8 +68,26 @@
             drag = {x: e.clientX, left: album.scrollLeft, moved: false};
         });
 
+        const endDrag = () => {
+            if (!drag) {
+                return;
+            }
+
+            const left = album.scrollLeft;
+            drag = null;
+            album.classList.remove('is-drag');
+            // Bật lại snap rồi giữ nguyên vị trí để snap mượt tới ảnh gần nhất
+            album.scrollLeft = left;
+        };
+
         window.addEventListener('pointermove', (e) => {
             if (!drag) {
+                return;
+            }
+
+            // Nút trái đã nhả mà không có pointerup (nhả ngoài cửa sổ, sự kiện bị nuốt) => dừng kéo, không cuộn theo chuột
+            if ((e.buttons & 1) === 0) {
+                endDrag();
                 return;
             }
 
@@ -121,19 +103,10 @@
             }
         });
 
-        window.addEventListener('pointerup', () => {
-            if (!drag) {
-                return;
-            }
-
-            const left = album.scrollLeft;
-            drag = null;
-            album.classList.remove('is-drag');
-            // Bật lại snap rồi giữ nguyên vị trí để snap mượt tới ảnh gần nhất
-            album.scrollLeft = left;
-        });
+        window.addEventListener('pointerup', endDrag);
+        // Trình duyệt huỷ pointer (bắt đầu kéo-thả ảnh gốc, mất focus...) thì không có pointerup
+        window.addEventListener('pointercancel', endDrag);
     }
 
-    initScroll();
     initAlbum();
 })();

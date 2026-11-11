@@ -46,7 +46,6 @@ class TearCover {
         this.ctx = this.cv.getContext('2d');
         this.hint = cover.querySelector('.tear-hint');
         this.hintText = cover.querySelector('.tear-hint-text');
-        this.button = cover.querySelector('.tear-btn');
         this.onReveal = onReveal;
         this.onDone = onDone;
         this.reduced = prefersReducedMotion();
@@ -58,7 +57,6 @@ class TearCover {
         this.fallT = 0;
         this.last = 0;
 
-        this.button.textContent = this.reduced ? 'Mở thiệp' : 'Hoặc nhấn để mở';
         this.resize();
         this.initNotch();
 
@@ -80,7 +78,20 @@ class TearCover {
         this.cv.addEventListener('pointermove', (e) => this.move(e));
         this.cv.addEventListener('pointerup', () => this.up());
         this.cv.addEventListener('pointercancel', () => this.up());
-        this.button.addEventListener('click', () => this.open());
+
+        // Bàn phím: Enter/Space mở thiệp. Nội dung phía sau đang inert nên phím rơi về document;
+        // riêng nút chuyển ngôn ngữ (nằm trên lớp giấy) vẫn nhận focus => phím trên nút đó không mở thiệp
+        this.onKey = (e) => {
+            if (e.target instanceof Element && e.target.closest('button, a, input, select, textarea')) {
+                return;
+            }
+
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.open();
+            }
+        };
+        document.addEventListener('keydown', this.onKey);
 
         this.tick = (ts) => this.frame(ts);
         this.raf = requestAnimationFrame(this.tick);
@@ -98,11 +109,14 @@ class TearCover {
         this.dpr = this.cv.width / this.W;
         this.ctx.setTransform(this.dpr, 0, 0, this.cv.height / this.H, 0, 0);
 
+        // Nội dung theo ngôn ngữ (lang/: cover.*): đổi khoá data-i18n, i18n.js dịch lại cả khi khách đổi ngôn ngữ
         if (this.reduced) {
-            this.hintText.textContent = 'Nhấn để mở thiệp';
+            this.hintText.dataset.i18n = 'cover.hint_tap';
         } else {
-            this.hintText.textContent = this.W > 640 ? 'Nhấp và kéo xuống để mở thiệp' : 'Vuốt xuống để mở thiệp';
+            this.hintText.dataset.i18n = this.W > 640 ? 'cover.hint_drag' : 'cover.hint_swipe';
         }
+
+        window.yepI18n?.apply(this.hintText);
     }
 
     // Texture giấy: nền kem + sợi giấy + vignette nhẹ, vẽ một lần vào canvas phụ
@@ -268,6 +282,7 @@ class TearCover {
     finish() {
         this.phase = 'done';
         cancelAnimationFrame(this.raf);
+        document.removeEventListener('keydown', this.onKey);
 
         if (this.ro) {
             this.ro.disconnect();
@@ -806,6 +821,24 @@ function initTableCounter() {
     }, MOTION.counter.delayMs));
 }
 
+// ===== Video nền thiệp: mỗi breakpoint một <video>, <source media> chỉ cho bản đang hiện tải file (views/invite.php) =====
+// Trình duyệt chỉ xét media lúc chọn nguồn => sang breakpoint kia (xoay máy, đổi cỡ cửa sổ) thì nạp bản chưa có nguồn.
+function initBgVideos() {
+    const videos = document.querySelectorAll('video.bg-video');
+
+    if (!videos.length) {
+        return;
+    }
+
+    window.matchMedia('(max-width: 640px)').addEventListener?.('change', () => {
+        videos.forEach((video) => {
+            if (!video.currentSrc) {
+                video.load();
+            }
+        });
+    });
+}
+
 // ===== Khởi tạo =====
 // Vé được chèn sau khi trang đã tải (story.js, sau khi gửi RSVP) => gắn lại hiệu ứng vé
 document.addEventListener('yep:ticket-ready', initTicketReveal);
@@ -815,3 +848,4 @@ window.yepMotionReady = true;
 initInviteCover();
 initTicketReveal();
 initInviteReveal();
+initBgVideos();

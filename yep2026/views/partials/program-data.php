@@ -1,11 +1,14 @@
 <?php
+// Dữ liệu (giờ, màu, ảnh): config/event.php (program); chữ hiển thị: lang/ (program.*).
 $program = $event['program'] ?? [];
+// Mốc có tên trống ở ngôn ngữ đang chọn => ẩn
 $schedule = array_values(array_filter(
     $program['schedule'] ?? [],
-    fn ($item) => stringField($item, 'title') !== ''
+    fn ($item) => stringField($item, 'key') !== ''
+        && trim(message('program.items.' . stringField($item, 'key'))) !== ''
 ));
-$dressCode = stringField($event, 'dress_code');
-$dressCodeNote = stringField($program, 'dress_code_note');
+$dressCode = trim(message('program.dress_code'));
+$dressCodeNote = trim(message('program.dress_code_note'));
 
 $dressColors = array_values(array_filter(
     array_map(
@@ -19,7 +22,7 @@ $hasSchedule = $schedule !== [];
 $hasProgram = $hasDress || $hasSchedule;
 
 $programImage = stringField($program, 'image');
-$programTitle = stringField($program, 'title');
-$dateLabel = stringField($program, 'date_label');
-$dressCodeLabel = stringField($program, 'dress_code_label');
-$dateText = (new DateTimeImmutable($event['date']))->format('d.m.Y');
+$programTitle = trim(message('program.title'));
+$dateLabel = trim(message('program.date_label'));
+$dressCodeLabel = trim(message('program.dress_code_label'));
+$dateText = (new DateTimeImmutable($event['date']))->format('d/m/Y');

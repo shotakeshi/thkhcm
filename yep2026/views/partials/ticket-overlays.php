@@ -8,7 +8,8 @@
 $canDownload = canDownloadTicket($employee);
 ?>
 <?php if ($canDownload): ?>
-    <div class="toast-region" role="status" aria-live="polite">
+    <?php /* Toast của vé luôn tiếng Anh (public/js/ticket.js) */ ?>
+    <div class="toast-region" lang="en" role="status" aria-live="polite">
         <div class="toast" hidden>
             <svg
                 class="toast-icon"

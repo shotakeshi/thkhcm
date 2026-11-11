@@ -15,16 +15,17 @@
     let closeTimer = 0;
     let pointerStart = null;
 
-    // Dựng một <dialog> duy nhất khi cần lần đầu: top layer nên không đụng z-index của Recap/thiệp
+    // Dựng một <dialog> duy nhất khi cần lần đầu: top layer nên không đụng z-index của Recap/thiệp.
+    // Nhãn theo ngôn ngữ (lang/: lightbox.*): data-i18n-attr để i18n.js dịch lại khi khách đổi ngôn ngữ
     function build() {
         dialog = document.createElement('dialog');
         dialog.className = 'lightbox';
-        dialog.setAttribute('aria-label', 'Xem ảnh phóng to');
+        dialog.dataset.i18nAttr = 'aria-label:lightbox.label';
 
         const close = document.createElement('button');
         close.type = 'button';
         close.className = 'lightbox-close';
-        close.setAttribute('aria-label', 'Đóng');
+        close.dataset.i18nAttr = 'aria-label:lightbox.close';
         close.innerHTML = '<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none"'
             + ' stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'
             + '<path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -35,6 +36,7 @@
 
         dialog.append(close, image);
         document.body.append(dialog);
+        window.yepI18n?.apply(dialog);
 
         close.addEventListener('click', hide);
 

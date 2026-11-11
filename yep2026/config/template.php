@@ -1,6 +1,6 @@
 <?php
 
-// Template mẫu. Placeholder: {name}, {code}, {position}, {email}, {invite_url}
+// Template mẫu. Placeholder: {name}, {code}, {email}, {invite_url}
 return [
     'subject' => '[THK] Thư mời Year End Party 2026',
     'body'    => <<<HTML

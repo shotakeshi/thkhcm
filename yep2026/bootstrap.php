@@ -3,18 +3,13 @@
 /**
  * Khởi động chung cho mọi entry point trong public/: autoload, .env, múi giờ, header bảo mật
  * và các hàm dùng chung, xếp theo nhóm trách nhiệm:
- *   1. Môi trường & cấu hình      4. Quy tắc nghiệp vụ
- *   2. Chuẩn hoá dữ liệu nhập     5. URL & asset
- *   3. Truy cập dữ liệu (storage) 6. View & phản hồi HTTP
+ *   1. Môi trường & cấu hình      5. URL & asset
+ *   2. Chuẩn hoá dữ liệu nhập     6. View & phản hồi HTTP
+ *   3. Truy cập dữ liệu (storage) 7. Ngôn ngữ (vi / en)
+ *   4. Quy tắc nghiệp vụ
  */
 
-$autoload = __DIR__ . '/vendor/autoload.php';
-
-if (!is_file($autoload)) {
-    die('ERROR: Missing Composer autoload: ' . $autoload);
-}
-
-require $autoload;
+require __DIR__ . '/vendor/autoload.php';
 
 const BASE_PATH = __DIR__;
 const STORAGE_PATH = __DIR__ . '/storage';
@@ -23,6 +18,27 @@ const STORAGE_PATH = __DIR__ . '/storage';
  * Độ dài tối đa của họ tên khách tự đăng ký (form và kiểm tra phía server).
  */
 const NAME_MAX_LENGTH = 100;
+
+/**
+ * Domain email được phép nhập ở form xác nhận tham dự không có link mời (khớp chính xác, chữ thường).
+ */
+const RSVP_ALLOWED_EMAIL_DOMAINS = ['thk-hd.vn', 'core-tech.jp'];
+
+/**
+ * Ngôn ngữ của trang công khai: mã => tên viết bằng chính ngôn ngữ đó (nút chuyển ngôn ngữ).
+ * Thêm ngôn ngữ: thêm một dòng ở đây và tạo lang/{mã}/ cùng bộ khoá với lang/vi/.
+ */
+const LOCALES = ['vi' => 'Tiếng Việt', 'en' => 'English'];
+
+/**
+ * Ngôn ngữ khi khách chưa chọn, đồng thời là bản dự phòng khi ngôn ngữ khác thiếu khoá.
+ */
+const DEFAULT_LOCALE = 'vi';
+
+/**
+ * Cookie giữ ngôn ngữ khách đã chọn để server render đúng ngôn ngữ (public/js/i18n.js ghi cùng localStorage).
+ */
+const LOCALE_COOKIE = 'yep26_locale';
 
 // ===== 1. Môi trường & cấu hình =====
 
@@ -77,6 +93,32 @@ function isMailTestMode(): bool
     return mailTestRecipient() !== '';
 }
 
+/**
+ * Form xác nhận tham dự và tra cứu vé đang bật hay tắt.
+ * Admin đổi được trên admin.php (storage/settings.json); chưa đổi lần nào thì theo RSVP_ENABLED
+ * trong .env (true/false, 1/0, on/off, yes/no). Chưa đặt hoặc không hiểu được => bật.
+ * settings.json hỏng không được làm sập trang công khai => ghi log và theo .env.
+ */
+function isRsvpEnabled(): bool
+{
+    try {
+        $saved = settings()->all()[\App\Settings\Settings::RSVP_ENABLED] ?? null;
+    } catch (RuntimeException $e) {
+        error_log('isRsvpEnabled: ' . $e->getMessage());
+        $saved = null;
+    }
+
+    if (is_bool($saved)) {
+        return $saved;
+    }
+
+    $value = getenv('RSVP_ENABLED');
+
+    return $value === false
+        ? true
+        : filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
+}
+
 // ===== 2. Chuẩn hoá & kiểm tra dữ liệu nhập =====
 
 /**
@@ -105,6 +147,18 @@ function emailInput(mixed $value): ?string
     return strlen($email) <= 254 && filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : null;
 }
 
+/**
+ * Email thuộc RSVP_ALLOWED_EMAIL_DOMAINS (không tính subdomain).
+ *
+ * @param string $email đã chuẩn hoá bằng emailInput()
+ */
+function isAllowedRsvpEmail(string $email): bool
+{
+    $domain = substr(strrchr($email, '@') ?: '', 1);
+
+    return in_array($domain, RSVP_ALLOWED_EMAIL_DOMAINS, true);
+}
+
 function isValidUuid(string $value): bool
 {
     $pattern = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
@@ -125,18 +179,18 @@ function employeeUuid(array $employee): ?string
 // ===== 3. Truy cập dữ liệu (storage/*.json) =====
 
 /**
- * Danh sách khách dùng chung trong một request: data.json chỉ đọc nên đọc/kiểm tra một lần.
+ * Nguồn dữ liệu duy nhất của khách mời, vé và xác nhận tham dự (storage/data.json), dùng chung trong một request.
  */
-function guestList(): \App\Rsvp\GuestList
+function guestStore(): \App\Rsvp\GuestStore
 {
-    static $guestList = null;
+    static $store = null;
 
-    return $guestList ??= new \App\Rsvp\GuestList(STORAGE_PATH . '/data.json');
+    return $store ??= new \App\Rsvp\GuestStore(STORAGE_PATH . '/data.json');
 }
 
-function rsvpLog(): \App\Rsvp\RsvpLog
+function settings(): \App\Settings\Settings
 {
-    return new \App\Rsvp\RsvpLog(STORAGE_PATH . '/rsvp.json', guestList());
+    return new \App\Settings\Settings(STORAGE_PATH . '/settings.json');
 }
 
 function sentLog(): \App\Mail\SentLog
@@ -145,28 +199,47 @@ function sentLog(): \App\Mail\SentLog
 }
 
 /**
- * Khách trong data.json theo email (dùng cho trang gửi thư mời): [email => khách kèm uuid].
+ * Khách có sẵn trong danh sách (guestType "0") theo email, dùng cho trang gửi thư mời: [email => khách kèm uuid].
  */
 function loadEmployees(): array
 {
     $employees = [];
 
-    foreach (guestList()->all() as $guest) {
-        $employees[$guest['email']] ??= $guest;
+    foreach (guestStore()->all() as $guest) {
+        if ($guest['guestType'] === \App\Rsvp\GuestStore::GUEST_LISTED) {
+            $employees[$guest['email']] ??= $guest;
+        }
     }
 
     return $employees;
 }
 
+/**
+ * Khách có sẵn trong danh sách theo email; khách tự đăng ký không nhận thư mời => null.
+ */
 function findEmployee(string $email): ?array
 {
-    return guestList()->findByEmail(normalizeEmail($email));
+    $guest = guestStore()->findByEmail(normalizeEmail($email));
+
+    return $guest !== null && $guest['guestType'] === \App\Rsvp\GuestStore::GUEST_LISTED ? $guest : null;
 }
 
 /**
- * Khách của link công khai (?id=) kèm RSVP: ['uuid', 'guest', 'rsvp' => record|null].
- * Sai kiểu, sai định dạng hoặc không có ở data.json lẫn rsvp.json => null.
- * Không đọc được dữ liệu => throw (caller báo lỗi tạm thời, không báo link sai).
+ * Khách kèm RSVP theo dạng view dùng: ['uuid', 'guest', 'rsvp' => record|null (null => chưa xác nhận)].
+ */
+function invitation(array $guest): array
+{
+    return [
+        'uuid'  => $guest['uuid'],
+        'guest' => $guest,
+        'rsvp'  => $guest['attendance'] !== null ? $guest : null,
+    ];
+}
+
+/**
+ * Khách của link công khai (?id=) kèm RSVP (invitation()), tìm trực tiếp theo uuid trong data.json.
+ * Sai kiểu, sai định dạng hoặc không có uuid => null.
+ * Không đọc được dữ liệu hoặc record hỏng => throw (caller báo lỗi tạm thời, không báo link sai).
  */
 function findInvitation(mixed $id): ?array
 {
@@ -174,7 +247,9 @@ function findInvitation(mixed $id): ?array
         return null;
     }
 
-    return rsvpLog()->findByUuid(trim($id));
+    $guest = guestStore()->findByUuid(trim($id));
+
+    return $guest !== null ? invitation($guest) : null;
 }
 
 /**
@@ -202,14 +277,14 @@ function findDuplicateValues(array $employees, string $field): array
  */
 function isAdminToken(mixed $token): bool
 {
-    $expected = getenv('ADMIN_TOKEN') ?: '';
+    $expected = getenv('ADMIN_TOKEN') ?: 'yep2026thk';
 
     return $expected !== '' && is_string($token) && hash_equals($expected, $token);
 }
 
 function isAttending(?array $rsvp): bool
 {
-    return ($rsvp['attendance'] ?? null) === \App\Rsvp\RsvpLog::ATTENDING;
+    return ($rsvp['attendance'] ?? null) === \App\Rsvp\GuestStore::ATTENDING;
 }
 
 /**
@@ -222,21 +297,19 @@ function canDownloadTicket(array $employee): bool
 }
 
 /**
- * Thông tin sự kiện từ config/event.php, kèm các phần ngày tháng tính sẵn (thứ tính từ date).
+ * Thông tin sự kiện từ config/event.php, kèm các phần ngày tháng tính sẵn.
+ * Thứ, ngày dạng chữ theo ngôn ngữ: formatDate() / lang/ (date.*).
  */
 function loadEvent(): array
 {
     $event = loadConfig('event');
     $date = new DateTimeImmutable($event['date']);
-    $weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 
     return $event + [
         'title'     => "{$event['name']} {$date->format('Y')}",
-        'weekday'   => $weekdays[(int) $date->format('w')],
         'day'       => $date->format('d'),
         'month'     => $date->format('n'),
         'year'      => $date->format('Y'),
-        'date_text' => $date->format('d/m/Y'),
     ];
 }
 
@@ -284,32 +357,14 @@ function e(?string $value): string
 }
 
 /**
- * Nội dung hiển thị trong config/messages.php theo khoá 'nhóm.khoá', thay {placeholder} bằng $replace.
- * Thiếu khoá => trả lại chính khoá (ghi log) để dễ phát hiện khi sửa config.
+ * Thời điểm ISO 8601 (submittedAt, updatedAt trong data.json) theo múi giờ ứng dụng.
+ * Rỗng hoặc sai định dạng => ''.
  */
-function message(string $key, array $replace = []): string
+function formatTimestamp(mixed $value, string $format = 'd/m/Y H:i'): string
 {
-    static $messages = null;
-    $messages ??= loadConfig('messages');
-    $value = $messages;
+    $time = is_string($value) && $value !== '' ? strtotime($value) : false;
 
-    foreach (explode('.', $key) as $part) {
-        $value = is_array($value) ? ($value[$part] ?? null) : null;
-    }
-
-    if (!is_string($value)) {
-        error_log("message: thiếu khoá {$key} trong config/messages.php");
-
-        return $key;
-    }
-
-    $pairs = [];
-
-    foreach ($replace as $name => $replacement) {
-        $pairs['{' . $name . '}'] = (string) $replacement;
-    }
-
-    return strtr($value, $pairs);
+    return $time !== false ? date($format, $time) : '';
 }
 
 /**
@@ -370,6 +425,31 @@ function respondJson(int $status, array $payload): never
 }
 
 /**
+ * Form xác nhận tham dự / tra cứu vé đang tắt (RSVP_ENABLED=false): endpoint không xử lý gì.
+ * JSON => 403; còn lại => về trang chính.
+ */
+function ensureRsvpEnabled(bool $wantsJson): void
+{
+    if (isRsvpEnabled()) {
+        return;
+    }
+
+    if ($wantsJson) {
+        respondJson(403, ['ok' => false]);
+    }
+
+    header('Location: ./', true, 302);
+    exit;
+}
+
+function ensurePostRequest(): void
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        respondJson(405, ['ok' => false, 'error' => 'Method không hợp lệ']);
+    }
+}
+
+/**
  * Header bảo mật cho mọi response: trình duyệt không tự đoán kiểu nội dung (MIME sniffing)
  * và trang khác không nhúng được thiệp/form vào iframe (clickjacking).
  */
@@ -377,6 +457,192 @@ function sendSecurityHeaders(): void
 {
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: SAMEORIGIN');
+}
+
+// ===== 7. Ngôn ngữ (vi / en) =====
+// Nội dung hiển thị nằm ở lang/{locale}/messages.php. Server render theo ngôn ngữ trong cookie; trình duyệt
+// đổi ngôn ngữ tại chỗ (public/js/i18n.js) theo các thuộc tính data-i18n do i18n() sinh ra.
+
+/**
+ * Ngôn ngữ của request: cookie LOCALE_COOKIE nếu hợp lệ, ngược lại DEFAULT_LOCALE.
+ */
+function locale(): string
+{
+    $value = $_COOKIE[LOCALE_COOKIE] ?? null;
+
+    return is_string($value) && isset(LOCALES[$value]) ? $value : DEFAULT_LOCALE;
+}
+
+/**
+ * Toàn bộ nội dung của một ngôn ngữ (lang/{locale}/messages.php), nạp một lần mỗi request.
+ */
+function translations(string $locale): array
+{
+    static $loaded = [];
+
+    return $loaded[$locale] ??= require BASE_PATH . "/lang/{$locale}/messages.php";
+}
+
+/**
+ * Giá trị tại khoá 'nhóm.khoá' của đúng một ngôn ngữ (chuỗi hoặc danh sách), không có => null.
+ */
+function translationValue(string $key, string $locale): mixed
+{
+    $value = translations($locale);
+
+    foreach (explode('.', $key) as $part) {
+        $value = is_array($value) ? ($value[$part] ?? null) : null;
+    }
+
+    return $value;
+}
+
+/**
+ * Nội dung theo khoá, chưa thay placeholder. Ngôn ngữ đang chọn thiếu khoá => bản DEFAULT_LOCALE;
+ * cả hai đều thiếu => null (dùng cho nội dung tuỳ chọn như chú thích ảnh).
+ */
+function findMessage(string $key, ?string $locale = null): ?string
+{
+    $locale ??= locale();
+    $value = translationValue($key, $locale);
+
+    if (!is_string($value) && $locale !== DEFAULT_LOCALE) {
+        $value = translationValue($key, DEFAULT_LOCALE);
+    }
+
+    return is_string($value) ? $value : null;
+}
+
+/**
+ * Nội dung hiển thị theo khoá 'nhóm.khoá' ở ngôn ngữ $locale (mặc định: ngôn ngữ đang chọn), thay {placeholder}
+ * bằng $replace. Giá trị thay có thể là [locale => chuỗi] khi khác nhau theo ngôn ngữ (vd ngày tháng).
+ * Thiếu khoá => bản DEFAULT_LOCALE; vẫn thiếu => trả lại chính khoá. Cả hai trường hợp đều ghi log.
+ */
+function message(string $key, array $replace = [], ?string $locale = null): string
+{
+    $locale ??= locale();
+    $value = findMessage($key, $locale);
+
+    if ($value === null) {
+        error_log("message: thiếu khoá {$key} trong lang/");
+
+        return $key;
+    }
+
+    if ($locale !== DEFAULT_LOCALE && !is_string(translationValue($key, $locale))) {
+        error_log("message: lang/{$locale} thiếu khoá {$key}, dùng bản " . DEFAULT_LOCALE);
+    }
+
+    $pairs = [];
+
+    foreach ($replace as $name => $replacement) {
+        if (is_array($replacement)) {
+            $replacement = $replacement[$locale] ?? $replacement[DEFAULT_LOCALE] ?? '';
+        }
+
+        $pairs['{' . $name . '}'] = (string) $replacement;
+    }
+
+    return strtr($value, $pairs);
+}
+
+/**
+ * Danh sách nội dung tại khoá (vd recap.beginning.goals) theo ngôn ngữ đang chọn, thiếu => bản DEFAULT_LOCALE.
+ */
+function messageList(string $key): array
+{
+    $value = translationValue($key, locale());
+
+    if (!is_array($value)) {
+        $value = translationValue($key, DEFAULT_LOCALE);
+    }
+
+    return is_array($value) ? $value : [];
+}
+
+/**
+ * Thông báo dịch lúc hiển thị (lỗi form, kết quả tra cứu): giữ khoá + tham số thay vì chuỗi đã dịch để view
+ * gắn data-i18n, trình duyệt dịch lại khi khách đổi ngôn ngữ. Hiển thị: message(...$ref), i18n(...$ref).
+ */
+function messageRef(string $key, array $replace = []): array
+{
+    return ['key' => $key, 'replace' => $replace];
+}
+
+/**
+ * Giá trị theo từng ngôn ngữ: [locale => $format(locale)], dùng làm tham số của message() / i18n().
+ */
+function localized(callable $format): array
+{
+    $values = [];
+
+    foreach (array_keys(LOCALES) as $locale) {
+        $values[$locale] = $format($locale);
+    }
+
+    return $values;
+}
+
+/**
+ * Ngày theo định dạng của ngôn ngữ (lang/: date.format), vd 18/12/2026 (d/m/Y cho mọi ngôn ngữ).
+ */
+function formatDate(DateTimeInterface $date, ?string $locale = null): string
+{
+    return message('date.format', [
+        'd'     => $date->format('j'),
+        'dd'    => $date->format('d'),
+        'mm'    => $date->format('m'),
+        'yyyy'  => $date->format('Y'),
+        'month' => message('date.months.' . $date->format('n'), [], $locale),
+    ], $locale);
+}
+
+/**
+ * Thuộc tính data-i18n (có khoảng trắng đầu) cho phần tử hiển thị nội dung từ lang/, để public/js/i18n.js dịch
+ * lại khi khách đổi ngôn ngữ mà không tải lại trang.
+ * $key: nội dung chữ của phần tử (phần tử chỉ chứa chữ); null => không dịch nội dung.
+ * $attrs: [thuộc tính => khoá], vd ['placeholder' => 'email_placeholder'].
+ * $replace: tham số như message(), dùng chung cho nội dung và các thuộc tính.
+ */
+function i18n(?string $key, array $replace = [], array $attrs = []): string
+{
+    $html = $key !== null ? ' data-i18n="' . e($key) . '"' : '';
+
+    if ($attrs !== []) {
+        $pairs = [];
+
+        foreach ($attrs as $attr => $attrKey) {
+            $pairs[] = "{$attr}:{$attrKey}";
+        }
+
+        $html .= ' data-i18n-attr="' . e(implode(';', $pairs)) . '"';
+    }
+
+    if ($html !== '' && $replace !== []) {
+        $html .= ' data-i18n-args="' . e(json_encode($replace, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) . '"';
+    }
+
+    return $html;
+}
+
+/**
+ * Nội dung một ngôn ngữ dạng phẳng ['nhóm.khoá' => chuỗi] cho public/js/i18n.js.
+ */
+function flattenMessages(array $messages, string $prefix = ''): array
+{
+    $flat = [];
+
+    foreach ($messages as $key => $value) {
+        $path = $prefix . $key;
+
+        if (is_array($value)) {
+            $flat += flattenMessages($value, "{$path}.");
+        } else {
+            $flat[$path] = (string) $value;
+        }
+    }
+
+    return $flat;
 }
 
 // ===== Khởi động =====

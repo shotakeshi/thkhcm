@@ -1,16 +1,11 @@
-/* ===== Lightbox dùng chung (js/lightbox.js): xem ảnh nội dung phóng to ===== */
-/* Chỉ thêm khả năng xem, không đổi kích thước/bố cục ảnh gốc. Màu lấy từ token trong theme.css. */
-
 [data-lightbox] {
     cursor: zoom-in;
 }
 
-/* Đang kéo album bằng chuột: giữ con trỏ grabbing của .album */
 .is-drag [data-lightbox] {
     cursor: inherit;
 }
 
-/* Khoá cuộn trang khi preview mở; bù thanh cuộn để nội dung không giật ngang */
 .is-lightbox-open,
 .is-lightbox-open body {
     overflow: hidden;
@@ -38,7 +33,6 @@
     color: var(--color-text);
     opacity: 0;
     transition: opacity .26s ease;
-    /* Chặn zoom double-tap của trình duyệt; vẫn cho pinch-zoom để xem chi tiết trên mobile */
     touch-action: pinch-zoom;
     overscroll-behavior: contain;
 }
@@ -51,14 +45,12 @@
     opacity: 1;
 }
 
-/* Nền đã nằm trên .lightbox; ::backdrop mặc định của <dialog> để trong suốt */
 .lightbox::backdrop {
     background: transparent;
 }
 
 .lightbox-img {
     display: block;
-    /* Lớn nhất có thể trong khung nhìn, giữ nguyên tỷ lệ, không crop */
     max-width: calc(100vw - 2 * var(--lightbox-gutter));
     max-height: calc(100vh - 2 * var(--lightbox-gutter));
     max-height: calc(100dvh - 2 * var(--lightbox-gutter));
@@ -85,7 +77,6 @@
     z-index: 1;
     display: grid;
     place-items: center;
-    /* Vùng chạm ≥ 44px cho mobile */
     width: 44px;
     height: 44px;
     padding: 0;
@@ -113,7 +104,6 @@
         --lightbox-gutter: 12px;
     }
 
-    /* Nút đóng nằm trên ảnh ở màn hẹp: chừa chỗ phía trên để không che ảnh */
     .lightbox-img {
         max-height: calc(100vh - 2 * 64px);
         max-height: calc(100dvh - 2 * 64px);

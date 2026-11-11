@@ -1,6 +1,3 @@
-/* ===== Section Recap "A Year to Remember" (partials/recap.php, đầu trang chính) ===== */
-/* Màu chủ đề và nền chung (ảnh, lớp phủ wine, ánh sáng) lấy từ theme.css: chương không tự đặt nền.
-   Ở đây chỉ thêm tông giấy của phòng trưng bày cho ảnh và trang nhật ký. */
 :root {
     --paper-warm: #efe4d0;
     --paper-ink: #2b1b12;
@@ -26,12 +23,6 @@
     transform: none;
 }
 
-/* Container .wrap dùng chung: theme.css */
-
-/* ===== Chữ dùng chung ===== */
-/* Trạng thái chờ reveal (trang nhật ký lật 3D) nằm ngoài khung nhìn: cắt tại chương để trang không bị nới rộng
-   (iOS Safari không tôn trọng overflow-x của body => cả trang bị kéo ngang, mép phải hụt). clip không tạo vùng cuộn; hidden là dự phòng cho Safari < 16. */
-/* Chương trong suốt: nền và ánh sáng là lớp chung của trang (theme.css body::before, story.css .dawn) => không có mép nối giữa chương */
 .chapter {
     position: relative;
     padding-block: var(--section-padding-y);
@@ -42,7 +33,6 @@
 
 .chapter-title {
     margin: 0 0 var(--space-title-content);
-    /* Tiêu đề xuống dòng trên SP không để một chữ đứng lẻ ở dòng cuối */
     text-wrap: balance;
     font-family: var(--font-script), var(--font-heading);
     font-weight: 400;
@@ -53,7 +43,7 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    padding-top: .12em; /* chừa chỗ dấu tiếng Việt khi clip text */
+    padding-top: .12em;
 }
 
 .center .chapter-title {
@@ -77,7 +67,6 @@
     color: var(--color-text-muted);
 }
 
-/* Nội dung chờ bổ sung trong config/recap.php */
 .todo {
     padding: 0 .25em;
     border-radius: 4px;
@@ -88,7 +77,6 @@
     box-decoration-break: clone;
 }
 
-/* ===== Khung ảnh: viền trắng / polaroid / ảnh chờ ===== */
 .f-white {
     --pad: clamp(8px, 1.2vw, 14px);
     position: relative;
@@ -172,7 +160,6 @@
         #17110e;
 }
 
-/* Khung cha đặt display: block cho ảnh => trả lại grid để căn giữa mô tả */
 .f-white > .ph,
 .polaroid > .ph {
     display: grid;
@@ -199,7 +186,6 @@
     opacity: .7;
 }
 
-/* ===== CTA ===== */
 .cta {
     display: inline-flex;
     align-items: center;
@@ -232,7 +218,6 @@
     transform: translateY(0) scale(.98);
 }
 
-/* ===== Thanh tiến trình + mục lục chương ===== */
 .progress {
     position: fixed;
     inset: 0 0 auto;
@@ -249,8 +234,6 @@
     transform: scaleX(0);
 }
 
-/* ===== 01 · Mở đầu ===== */
-/* Nền và ánh sáng là lớp chung của trang: thiệp và Recap liền một khung cảnh, không có đường nối ngang */
 .hero {
     --frame-pad: clamp(24px, 4vw, 56px);
     position: relative;
@@ -268,10 +251,11 @@
 .hero-inner {
     display: grid;
     justify-items: center;
-    padding: 0 var(--frame-pad) var(--frame-pad);
+    /* Khung tranh của hero đã bỏ: chỉ giữ đệm dưới cho vị trí dọc; lề ngang theo --gutter của .hero như các section khác
+       (đệm ngang cũ ăn 48px ở màn 320px, nút "Bắt đầu hành trình" bị xuống dòng) */
+    padding-bottom: var(--frame-pad);
 }
 
-/* Tiêu đề → câu dẫn → đoạn mở đầu → CTA: cùng nhịp với chương (title-content, quote-body, content-cta) */
 .hero-sub {
     margin: var(--space-title-content) 0 var(--space-quote-body);
     font-family: var(--font-heading);
@@ -289,7 +273,6 @@
     color: var(--color-text-muted);
 }
 
-/* ===== Hiện dần khi cuộn tới (chỉ khi JS chạy) ===== */
 @media (prefers-reduced-motion: no-preference) {
     .js [data-reveal] {
         opacity: 0;
@@ -317,7 +300,6 @@
     }
 }
 
-/* ===== 02 · Những ngày đầu tiên ===== */
 .beginning-grid {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -412,7 +394,6 @@
     color: var(--paper-muted);
 }
 
-/* Trang phải lật mở như cuốn nhật ký */
 @media (prefers-reduced-motion: no-preference) {
     .js .diary[data-reveal] {
         transform: none;
@@ -428,7 +409,6 @@
     }
 }
 
-/* ===== 03–04 · Những ngày hội, những chuyến đi: lưới ảnh sự kiện ===== */
 .events {
     display: grid;
     gap: var(--space-block);
@@ -467,8 +447,6 @@
     color: var(--color-text);
 }
 
-/* Cắt dán ảnh sự kiện (partials/recap-events.php): lưới chồng lớp 12 cột (mobile 6 cột), vị trí từng ảnh do --area / --area-m đặt inline.
-   is-grid: bố cục riêng cho 1/3/5 ảnh; is-solo: một ảnh; is-flow: số ảnh khác, xếp chảy nhiều cột */
 .collage {
     position: relative;
 }
@@ -514,14 +492,12 @@
     transition: rotate .6s var(--ease-out), translate .6s var(--ease-out);
 }
 
-/* Di chuột: ảnh thẳng lại và nổi lên trên các ảnh chồng */
 .collage-item:hover {
     z-index: 7;
     rotate: 0deg;
     translate: 0 -6px;
 }
 
-/* ----- Khung ảnh: giấy in, giấy xé ----- */
 .photo-frame {
     position: relative;
     margin: 0;
@@ -543,7 +519,6 @@
     aspect-ratio: auto;
 }
 
-/* Slot khai báo 'fit' => 'natural' (config/recap-collage.php): khung ôm sát ảnh theo tỉ lệ, hiện trọn ảnh */
 .collage-item.fit-natural {
     align-self: center;
 }
@@ -579,12 +554,10 @@
     display: grid;
 }
 
-/* clip-path cắt mất box-shadow => bóng đổ đặt ở phần tử cha */
 .collage-item.is-torn {
     filter: drop-shadow(0 14px 16px rgba(0, 0, 0, .45));
 }
 
-/* ----- Trang trí: băng dính, kẹp giấy, lấp lánh, đường bay ----- */
 .has-tape::before,
 .has-clip::before,
 .diary .polaroid::before {
@@ -639,7 +612,6 @@
     opacity: .9;
 }
 
-/* Ảnh rơi nhẹ xuống bàn khi cuộn tới; delay riêng cho từng thuộc tính để hover không bị trễ */
 @media (prefers-reduced-motion: no-preference) {
     .js .collage-item[data-reveal] {
         transform: translateY(36px) scale(.92);
@@ -656,7 +628,6 @@
     }
 }
 
-/* ===== 06 · Những con người: tường tranh kiểu salon ===== */
 .salon {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -679,17 +650,14 @@
     aspect-ratio: auto;
 }
 
-/* Ô lưới có tỉ lệ cố định, ảnh thật có tỉ lệ riêng => contain để hiện đủ ảnh, không méo (phần thừa lộ nền khung giấy/viền trắng) */
 .salon-item figure > img {
     width: 100%;
     object-fit: contain;
     object-position: center;
 }
 
-/* Mọi khung cùng cỡ ngang lớn, 2 khung mỗi hàng */
 .salon-item { grid-column: span 6; grid-row: span 5; }
 
-/* Tường tranh xen ảnh giấy xé (markup chọn s1, s4): giữ chỗ cho nhãn, bóng đổ đặt ở li vì clip-path cắt box-shadow */
 .salon-item .f-torn {
     position: relative;
     margin: 0;
@@ -699,7 +667,6 @@
     filter: drop-shadow(0 14px 16px rgba(0, 0, 0, .45));
 }
 
-/* Nhãn nằm trong mép giấy, không bị clip-path cắt */
 .salon-item .f-torn .salon-cap {
     bottom: var(--space-4);
 }
@@ -723,7 +690,6 @@
     transition: opacity .35s, transform .35s var(--ease-out);
 }
 
-/* Ảnh chờ đã tự ghi mô tả => không cần nhãn */
 .salon-item figure:has(.ph) .salon-cap {
     display: none;
 }
@@ -744,7 +710,6 @@
     transform: translate(-50%, 0);
 }
 
-/* ===== 07 · Những khoảnh khắc: album cuộn ngang ===== */
 .moments-head {
     display: flex;
     flex-wrap: wrap;
@@ -753,7 +718,6 @@
     gap: var(--space-6);
 }
 
-/* Đầu chương là flex => margin không gộp với album: bỏ margin cuối để khoảng cách tới album chỉ là --space-head-content, nút đáy thẳng hàng chữ */
 .moments-head > div > :last-child {
     margin-bottom: 0;
 }
@@ -793,10 +757,7 @@
     align-items: flex-start;
     gap: clamp(var(--space-8), 4vw, var(--space-12));
     margin: 0;
-    /* Ảnh đầu thẳng mép .wrap: 100% (không phải 100vw) để không lệch theo thanh cuộn.
-       Phần đệm trên chừa chỗ cho dây phơi + kẹp giấy */
     padding: calc(var(--space-head-content) + 40px) max(var(--gutter), (100% - var(--container-max)) / 2) var(--space-12);
-    /* Dây phơi: nền local => trải hết chiều dài cuộn ngang và trôi theo ảnh */
     background: url("../images/deco/twine.svg") repeat-x 0 var(--line-y) / 60px 10px;
     background-attachment: local;
     overflow-x: auto;
@@ -818,7 +779,6 @@
     user-select: none;
 }
 
-/* Ảnh treo bằng kẹp, xen kẽ dọc / ngang / vuông */
 .album-item {
     position: relative;
     flex: 0 0 clamp(220px, 23vw, 300px);
@@ -889,13 +849,10 @@
     pointer-events: none;
 }
 
-/* ===== 08 · Chương tiếp theo ===== */
 .closing {
     text-align: center;
 }
 
-/* Scope theo .closing: section cuối trang (.page-closing, invite.css) cũng có .closing-inner.
-   position/z-index/padding-block trước đây kế thừa ngoài ý muốn từ invite.css, nay ghi rõ để giữ nguyên bố cục. */
 .closing .closing-inner {
     position: relative;
     z-index: 2;
@@ -925,7 +882,6 @@
     font-weight: var(--weight-heading);
 }
 
-/* ===== Tablet ===== */
 @media (max-width: 1024px) {
     .beginning-grid {
         grid-template-columns: 1fr;
@@ -937,12 +893,20 @@
 }
 
 @media (max-width: 900px) {
+    /* Một cột: ảnh cao theo tỉ lệ của chính ảnh (4:3 khi chưa tải) thay vì hàng cố định.
+       Hàng 64px x 5 không theo kịp bề ngang 641–900px => ảnh bị viền trắng/kem hai bên (object-fit: contain) */
     .salon {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
-        grid-auto-rows: 64px;
+        grid-template-columns: minmax(0, 1fr);
+        grid-auto-rows: auto;
     }
 
-    .salon-item { grid-column: span 6; grid-row: span 5; }
+    .salon-item { grid-column: auto; grid-row: auto; }
+
+    .salon-item figure > img,
+    .salon-item figure > .ph {
+        height: auto;
+        aspect-ratio: auto 4 / 3;
+    }
 
     .event,
     .event.is-flip {
@@ -960,7 +924,6 @@
     }
 }
 
-/* ===== Mobile ===== */
 @media (max-width: 640px) {
     .diary {
         grid-template-columns: 1fr;
@@ -1001,7 +964,6 @@
         column-gap: var(--space-4);
     }
 
-    /* Màn hẹp: nghiêng ít hơn để ảnh chồng không lấn ra mép */
     .collage-item {
         rotate: calc(var(--tilt, 0deg) * .6);
     }
@@ -1009,13 +971,6 @@
     .has-tape::before {
         height: 20px;
     }
-
-    .salon {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-auto-rows: 72px;
-    }
-
-    .salon-item { grid-column: span 2; grid-row: span 3; }
 
     .album-nav {
         display: none;
@@ -1041,7 +996,6 @@
     }
 }
 
-/* Không chuyển động: mọi thứ hiện sẵn ở trạng thái cuối */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

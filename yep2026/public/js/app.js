@@ -66,10 +66,11 @@ function getRowsByStatus(status) {
 }
 
 /**
- * Các dòng gửi hàng loạt được: bỏ qua đã gửi và "cần kiểm tra" (có thể đã nhận rồi).
+ * Các dòng gửi hàng loạt được: bỏ qua đã gửi, "cần kiểm tra" (có thể đã nhận rồi)
+ * và đang gửi (nút "Gửi lại" của dòng đó đang chờ send.php => gửi tiếp sẽ trùng).
  */
 function getUnsentRows() {
-    return rows.filter((row) => ![STATUS.SENT, STATUS.UNCERTAIN].includes(row.dataset.status));
+    return rows.filter((row) => ![STATUS.SENT, STATUS.UNCERTAIN, STATUS.SENDING].includes(row.dataset.status));
 }
 
 // ===== API =====
@@ -119,8 +120,8 @@ function statusHtml(status, info) {
         case STATUS.SENDING:
             return '<span class="status status-sending"><span class="spinner-border spinner-border-sm"></span>Đang gửi</span>';
         case STATUS.SENT:
-            return '<span class="status status-sent"><i class="bi bi-check-circle-fill"></i>Đã gửi</span>'
-                + `<span class="status-meta">${escapeHtml(info)}</span>`;
+            // Thời gian gửi nằm ở cột Thời gian (renderSentTime)
+            return '<span class="status status-sent"><i class="bi bi-check-circle-fill"></i>Đã gửi</span>';
         case STATUS.TEST:
             return '<span class="status status-test"><i class="bi bi-check-circle"></i>Đã gửi thử</span>';
         case STATUS.FAILED:
@@ -149,6 +150,36 @@ function renderRowStatus(row, status, info = '') {
     if (cell) {
         cell.innerHTML = statusHtml(status, info);
     }
+
+    renderSentTime(row);
+}
+
+/**
+ * "2026-11-05 09:12:30" (sent.json) => "05/11 09:12", cùng định dạng với thời gian xác nhận.
+ * Khác định dạng => giữ nguyên.
+ */
+function formatSentAt(value) {
+    const match = /^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/.exec(value);
+
+    return match ? `${match[2]}/${match[1]} ${match[3]}` : value;
+}
+
+/**
+ * Thời gian gửi thư ở cột Thời gian, chỉ hiện khi dòng đang ở trạng thái đã gửi.
+ */
+function renderSentTime(row) {
+    const cell = row.querySelector('.time-sent');
+
+    if (!cell) {
+        return;
+    }
+
+    const sentAt = row.dataset.status === STATUS.SENT ? row.dataset.sentAt ?? '' : '';
+
+    cell.hidden = sentAt === '';
+    cell.innerHTML = sentAt === ''
+        ? ''
+        : `<span class="time-label">Gửi thư</span>${escapeHtml(formatSentAt(sentAt))}`;
 }
 
 function renderSummary() {
@@ -214,7 +245,7 @@ function renderControls() {
 
 function renderPage() {
     renderSummary();
-    renderControls();
+    // renderControls();
 }
 
 // ===== Gửi email =====

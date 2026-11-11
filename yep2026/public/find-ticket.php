@@ -5,6 +5,8 @@ require dirname(__DIR__) . '/bootstrap.php';
 $event = loadEvent();
 $wantsJson = str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
 
+ensureRsvpEnabled($wantsJson);
+
 // Tra cứu nằm trong trang chính: mở thẳng file thì về đúng section
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ./#tim-ve', true, 302);
@@ -20,28 +22,31 @@ $found = null;
 
 if ($draft === '') {
     $status = 422;
-    $error = message('errors.email_required');
+    $error = messageRef('errors.email_required');
 } elseif ($email === null) {
     $status = 422;
-    $error = message('errors.email_invalid');
+    $error = messageRef('errors.email_invalid');
 } else {
+    // Tra cứu trực tiếp trong data.json (khách có sẵn và khách tự đăng ký)
     try {
-        $found = rsvpLog()->findByEmail($email);
+        $guest = guestStore()->findByEmail($email);
+        $found = $guest !== null ? invitation($guest) : null;
     } catch (RuntimeException $e) {
         error_log('find-ticket.php: ' . $e->getMessage());
         $status = 500;
-        $error = message('lookup.errors.failed');
+        $error = messageRef('lookup.errors.failed');
     }
 }
 
-// Chưa có khách hoặc chưa RSVP: cùng một thông báo, không tiết lộ email có trong danh sách hay không
-if ($error === null && ($found['rsvp'] ?? null) === null) {
-    $message = message('lookup.not_found');
+if ($error === null && $found === null) {
+    $message = messageRef('lookup.not_found');
+} elseif ($error === null && $found['rsvp'] === null) {
+    $message = messageRef('lookup.not_responded');
 } elseif ($error === null && !isAttending($found['rsvp'])) {
-    $message = message('thanks_declined');
+    $message = messageRef('lookup.declined');
 } elseif ($error === null && !canDownloadTicket($found['guest'])) {
     // Chưa có mã Lucky Draw hoặc số bàn: chưa hiện vé
-    $message = message('lookup.ticket_pending');
+    $message = messageRef('lookup.ticket_pending');
 }
 
 $showTicket = $error === null && $message === null;

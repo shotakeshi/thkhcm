@@ -12,22 +12,34 @@ use RuntimeException;
 class JsonFile
 {
     /**
+     * Thời gian tối đa chờ lock (giây). Process khác giữ lock lâu hơn => throw thay vì treo request.
+     */
+    private const LOCK_TIMEOUT_SECONDS = 10;
+
+    /**
      * @param string $label tên file trong thông báo lỗi, ví dụ 'nhật ký gửi'
+     * @param bool $required file bắt buộc phải có dữ liệu: thiếu file hoặc file rỗng => throw thay vì coi là []
+     *                       (dùng cho dữ liệu nghiệp vụ, không bao giờ khởi tạo lại từ rỗng)
      */
     public function __construct(
         private string $path,
-        private string $label
+        private string $label,
+        private bool $required = false
     ) {
     }
 
     /**
-     * Chưa có file hoặc file rỗng => [].
+     * Chưa có file hoặc file rỗng => [] ($required => throw).
      * Nội dung không phải JSON object/array => throw, không bao giờ coi là rỗng
      * để tránh ghi đè mất dữ liệu cũ.
      */
     public function read(): array
     {
         if (!is_file($this->path)) {
+            if ($this->required) {
+                throw new RuntimeException("Không tìm thấy {$this->label}: {$this->path}");
+            }
+
             return [];
         }
 
@@ -44,6 +56,10 @@ class JsonFile
         }
 
         if (trim($content) === '') {
+            if ($this->required) {
+                throw new RuntimeException(ucfirst($this->label) . " bị rỗng: {$this->path}");
+            }
+
             return [];
         }
 
@@ -128,11 +144,7 @@ class JsonFile
         }
 
         try {
-            if (!flock($lock, LOCK_EX)) {
-                throw new RuntimeException(
-                    "Không khoá được {$this->label}: {$this->path}"
-                );
-            }
+            $this->acquireLock($lock);
 
             $data = $this->read();
             $original = $data;
@@ -150,6 +162,26 @@ class JsonFile
     }
 
     /**
+     * LOCK_EX có giới hạn thời gian chờ: lock bị process khác giữ quá LOCK_TIMEOUT_SECONDS => throw.
+     *
+     * @param resource $lock
+     */
+    private function acquireLock($lock): void
+    {
+        $deadline = microtime(true) + self::LOCK_TIMEOUT_SECONDS;
+
+        while (!flock($lock, LOCK_EX | LOCK_NB, $wouldBlock)) {
+            if (!$wouldBlock || microtime(true) >= $deadline) {
+                throw new RuntimeException(
+                    "Không khoá được {$this->label}" . ($wouldBlock ? ' (chờ lock quá lâu)' : '') . ": {$this->path}"
+                );
+            }
+
+            usleep(20_000);
+        }
+    }
+
+    /**
      * Ghi ra file tạm (tên riêng, cùng thư mục) rồi rename, nên file thật luôn là
      * bản cũ hoặc bản mới đầy đủ, không bị ghi dở. Lỗi ở bất kỳ bước nào => xoá
      * file tạm, giữ nguyên file cũ.
@@ -161,6 +193,8 @@ class JsonFile
                 $data,
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
             ) . "\n";
+            // Nội dung sắp ghi phải parse lại được, không thì không thay file cũ
+            json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             throw new RuntimeException("Không encode được {$this->label}: " . $e->getMessage());
         }
@@ -174,6 +208,8 @@ class JsonFile
 
         $written = @fwrite($handle, $json);
         $flushed = @fflush($handle);
+        // Đẩy dữ liệu xuống đĩa trước khi rename (mất điện không để lại file mới rỗng)
+        $synced = !function_exists('fsync') || @fsync($handle);
         $closed = @fclose($handle);
 
         // Giữ quyền của file cũ (file tạm tạo theo umask của PHP)
@@ -181,7 +217,7 @@ class JsonFile
             @chmod($tmp, fileperms($this->path) & 0777);
         }
 
-        if ($written !== strlen($json) || !$flushed || !$closed || !@rename($tmp, $this->path)) {
+        if ($written !== strlen($json) || !$flushed || !$synced || !$closed || !@rename($tmp, $this->path)) {
             @unlink($tmp);
 
             throw new RuntimeException(

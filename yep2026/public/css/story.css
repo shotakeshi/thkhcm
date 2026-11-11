@@ -1,13 +1,7 @@
-/* ===== Landing một trang: seam giữa các section, chuyển tiếp hai đầu ===== */
-/* Reveal chung ([data-reveal]) và token --reveal-* nằm ở recap.css/theme.css. File này nạp sau cùng. */
-
 :root {
-    /* Khai báo ở :root để nền thiệp PC (invite.css) tan mép đúng bằng phần seam chồng lên */
     --seam-h: clamp(120px, 22vh, 220px);
 }
 
-/* Seam: dải chuyển tiếp chồng lên hai section liền kề (margin âm bằng nửa chiều cao => không chiếm chỗ).
-   Trong suốt: nền là lớp chung của trang (theme.css), seam chỉ mang sợi chỉ vàng và vài hạt sáng nối hai đoạn câu chuyện. */
 .seam {
     position: relative;
     z-index: 3;
@@ -16,7 +10,6 @@
     pointer-events: none;
 }
 
-/* Sợi chỉ vàng: story.js đặt --seam-p (0-1) theo vị trí seam trong khung nhìn */
 .seam-thread {
     position: absolute;
     top: 0;
@@ -29,7 +22,6 @@
     transform-origin: top;
 }
 
-/* Hạt vàng dùng lại .particle và @keyframes drift (invite.css); chỉ chạy khi seam trong khung nhìn */
 .seam-particle {
     animation-play-state: paused;
 }
@@ -38,8 +30,6 @@
     animation-play-state: running;
 }
 
-/* Chuyền tay hai đầu: phần cuối section trên mờ còn ~60% và dịch lên tối đa 16px khi seam đi qua;
-   phần đầu section dưới reveal trễ ~0,15s sau khi sợi chỉ chạm tới. story.js gắn .seam-before/.seam-after và --seam-out. */
 .seam-before :is(.stage, .rsvp-wrap, .closing-inner) {
     opacity: calc(1 - var(--seam-out, 0) * .4);
     transform: translateY(calc(var(--seam-out, 0) * -16px));
@@ -49,7 +39,6 @@
     transition-delay: calc(.15s + var(--d, 0) * var(--reveal-stagger));
 }
 
-/* Điện thoại: 3 hạt thay vì 6 (con thứ 1 là .seam-thread) */
 @media (max-width: 640px) {
     .seam-particle:nth-child(n+5) {
         display: none;
@@ -71,11 +60,6 @@
     }
 }
 
-/* ===== Ánh sáng chủ đạo: một lớp cố định giữa nền (body::before) và nội dung =====
-   Nắng sớm champagne (palette ở theme.css) xuyên chéo từ góc trên phải (::before: tia khuếch tán, ::after: quầng sáng).
-   Hai trạng thái, story.js đặt data-light trên <html>: mặc định "dawn" (ngoài vùng nội dung) mờ, gọn ở góc trên;
-   "light" (đang xem Recap) tia rõ hơn, quầng lan xuống giữa. Chỉ đổi opacity/transform => chuyển mềm, không tốn layout.
-   Cường độ và thời lượng: --page-dawn-opacity, --page-light-opacity, --page-bg-transition (theme.css). */
 .dawn {
     position: fixed;
     inset: 0;
@@ -115,7 +99,6 @@
     transform-origin: 78% 0;
 }
 
-/* Quầng khuếch tán: champagne ở nguồn sáng, vàng trầm (antique) lan rất nhẹ xuống giữa => không đẩy nền sang vàng */
 .dawn::after {
     inset: 0;
     background:
@@ -130,7 +113,6 @@
     transform: none;
 }
 
-/* Nắng lên chậm khi lớp giấy rời (không bật kiểu đèn sân khấu); tia khẽ lay như tán lá */
 @media (prefers-reduced-motion: no-preference) {
     .dawn {
         animation: dawn-rise 1.5s .2s ease-out both;

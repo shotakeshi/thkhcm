@@ -50,7 +50,7 @@ function registerJsonErrorHandlers(): void
         global $requestPhase;
 
         error_log('send.php: ' . $e);
-        sendJson(500, errorResponse($requestPhase, $e->getMessage()));
+        sendJson(500, errorResponse($requestPhase, 'Lỗi máy chủ'));
     });
 
     register_shutdown_function(function (): void {
@@ -64,29 +64,14 @@ function registerJsonErrorHandlers(): void
             return;
         }
 
+        error_log('send.php: ' . $error['message']);
+
         $message = str_contains($error['message'], 'Maximum execution time')
             ? 'Máy chủ SMTP không phản hồi sau ' . SEND_TIME_LIMIT . ' giây'
-            : 'Lỗi máy chủ: ' . $error['message'];
+            : 'Lỗi máy chủ';
 
         sendJson(500, errorResponse($requestPhase, $message));
     });
-}
-
-/**
- * Endpoint gửi được tới email bất kỳ => chỉ cho phép gọi từ localhost.
- */
-function ensureLocalRequest(): void
-{
-    if (!in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)) {
-        respondJson(403, ['ok' => false, 'error' => 'Chỉ cho phép truy cập từ localhost']);
-    }
-}
-
-function ensurePostRequest(): void
-{
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        respondJson(405, ['ok' => false, 'error' => 'Method không hợp lệ']);
-    }
 }
 
 function ensureAdminToken(): void
@@ -101,7 +86,6 @@ function ensureAdminToken(): void
  */
 function readEmailInput(): string
 {
-    // email[]=... gửi lên dạng mảng, sai định dạng hoặc dài quá 254 ký tự => null
     $email = emailInput($_POST['email'] ?? '');
 
     if ($email === null) {
@@ -143,21 +127,24 @@ function readInviteUuid(string $email): string
     $uuid = employeeUuid(findEmployee($email) ?? []);
 
     if ($uuid === null) {
+        error_log("send.php: {$email} chưa có uuid hợp lệ trong data.json");
         respondJson(422, [
             'ok' => false,
-            'error' => 'Nhân viên chưa có uuid hợp lệ trong data.json',
+            'error' => 'Nhân viên chưa có trong danh sách khách mời hoặc thiếu mã thư mời',
         ]);
     }
 
     if (isset(findDuplicateValues(loadEmployees(), 'uuid')[$uuid])) {
+        error_log("send.php: uuid {$uuid} bị trùng với nhân viên khác");
         respondJson(422, [
             'ok' => false,
-            'error' => "uuid {$uuid} bị trùng với nhân viên khác",
+            'error' => 'Mã thư mời của nhân viên này bị trùng với nhân viên khác',
         ]);
     }
 
     if (appUrl() === '') {
-        respondJson(422, ['ok' => false, 'error' => 'Chưa cấu hình APP_URL trong .env']);
+        error_log('send.php: chưa cấu hình APP_URL trong .env');
+        respondJson(422, ['ok' => false, 'error' => 'Hệ thống chưa cấu hình đường dẫn thư mời']);
     }
 
     return $uuid;
@@ -174,8 +161,7 @@ function buildMail(string $email, string $uuid): array
 
     return MailTemplate::fromFile(BASE_PATH . '/config/template.php')->render([
         'name'       => $employee['name'] ?? $email,
-        'code'       => $employee['code'] ?? '',
-        'position'   => $employee['position'] ?? '',
+        'code'       => $employee['luckyDrawCode'] ?? '',
         'email'      => $email,
         'invite_url' => inviteUrl($uuid),
     ]);
@@ -183,7 +169,7 @@ function buildMail(string $email, string $uuid): array
 
 /**
  * Gửi email qua SMTP. Chế độ test: chuyển về MAIL_TEST_TO và ghi email gốc vào subject.
- * Gửi lỗi thì trả 500 kèm lý do.
+ * Gửi lỗi thì trả 500, lý do chi tiết chỉ ghi log (Mailer).
  */
 function sendMail(string $email, array $mail): void
 {
@@ -200,7 +186,7 @@ function sendMail(string $email, array $mail): void
     if (!$mailer->send($recipient, $subject, $mail['body'])) {
         respondJson(500, [
             'ok' => false,
-            'error' => $mailer->getLastError() ?? 'Gửi email thất bại',
+            'error' => 'Gửi email thất bại',
         ]);
     }
 }
@@ -208,7 +194,6 @@ function sendMail(string $email, array $mail): void
 header('Content-Type: application/json; charset=utf-8');
 registerJsonErrorHandlers();
 
-ensureLocalRequest();
 ensurePostRequest();
 ensureAdminToken();
 

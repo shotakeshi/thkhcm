@@ -1,41 +1,60 @@
 <?php
+// Nội dung chữ: lang/{vi,en}/recap.php (khoá recap.*); ảnh: config/recap.php
 $isTodo = fn (?string $value): bool => str_starts_with(trim((string) $value), '[');
 
 $text = fn (?string $value): string => $isTodo($value)
     ? '<span class="todo">' . e($value) . '</span>'
     : e($value);
 
-// Ảnh thật nếu có src, ngược lại là khung ảnh chờ kèm mô tả cần chụp
-$photo = function (array $item) use ($isTodo): string {
-    $note = (string) ($item['note'] ?? '');
+// Nội dung theo khoá recap.* (đã escape); phần tử chứa nó gắn i18n('recap.…') để đổi ngôn ngữ tại chỗ
+$copy = fn (string $key): string => e(message("recap.{$key}"));
+
+// Ảnh thật nếu có src, ngược lại là khung ảnh chờ kèm mô tả cần chụp.
+// $noteKey: khoá chú thích ảnh trong lang/ (tuỳ chọn, không có => alt rỗng)
+$photo = function (array $item, ?string $noteKey = null) use ($isTodo): string {
+    $hasNote = $noteKey !== null && findMessage($noteKey) !== null;
+    $note = $hasNote ? message($noteKey) : '';
     $src = trim((string) ($item['src'] ?? $item['image'] ?? ''));
 
     if ($src !== '') {
-        $alt = $isTodo($note) ? '' : $note;
+        $isAlt = $hasNote && !$isTodo($note);
 
         // data-lightbox: ảnh nội dung, click để xem phóng to (js/lightbox.js)
-        return '<img src="' . e($src) . '" alt="' . e($alt) . '" loading="lazy" decoding="async" data-lightbox>';
+        return '<img src="' . e($src) . '" alt="' . e($isAlt ? $note : '') . '"'
+            . ($isAlt ? i18n(null, [], ['alt' => $noteKey]) : '')
+            . ' loading="lazy" decoding="async" data-lightbox>';
     }
 
-    return '<span class="ph" role="img" aria-label="Ảnh chờ bổ sung: ' . e(trim($note, '[]')) . '">'
-        . '<span class="ph-note">' . e($note) . '</span></span>';
+    $placeholderArgs = ['note' => localized(fn (string $locale) => trim(
+        $hasNote ? message($noteKey, [], $locale) : '',
+        '[]'
+    ))];
+
+    return '<span class="ph" role="img" aria-label="'
+        . e(message('recap.photo_placeholder', $placeholderArgs)) . '"'
+        . i18n(null, $placeholderArgs, ['aria-label' => 'recap.photo_placeholder']) . '>'
+        . '<span class="ph-note"' . ($hasNote ? i18n($noteKey) : '') . '>' . e($note) . '</span></span>';
 };
 ?>
-<a class="skip" href="#khoi-dau">Bỏ qua phần mở đầu</a>
+<a class="skip" href="#khoi-dau"<?= i18n('recap.skip') ?>><?= $copy('skip') ?></a>
 
 <div class="progress" aria-hidden="true"><span class="progress-bar"></span></div>
 
 <?php // data-light-zone: vùng nội dung, story.js bật ánh sáng "light" khi cuộn vào ?>
 <main class="recap" data-light-zone>
     <!-- 01 · Mở đầu: vào vùng nội dung, ánh sáng nền sáng dần -->
-    <header class="hero" id="mo-dau" data-chapter>
+    <header class="hero" id="mo-dau">
         <div class="hero-inner">
-            <p class="hero-sub chapter-title" data-reveal style="--d: 1">Hành trình một năm đáng nhớ</p>
-            <p class="hero-lead" data-reveal style="--d: 2"><?= $text($recap['hero']['lead']) ?></p>
+            <p class="hero-sub chapter-title"<?= i18n('recap.hero.title') ?> data-reveal style="--d: 1">
+                <?= $copy('hero.title') ?>
+            </p>
+            <p class="hero-lead"<?= i18n('recap.hero.lead') ?> data-reveal style="--d: 2">
+                <?= $text(message('recap.hero.lead')) ?>
+            </p>
             <?php // Reveal ở lớp bọc: transition hover của .cta không bị transition reveal đè ?>
             <div data-reveal style="--d: 3">
                 <a class="cta" href="#khoi-dau">
-                    <span>Bắt đầu hành trình</span>
+                    <span<?= i18n('recap.hero.cta') ?>><?= $copy('hero.cta') ?></span>
                     <svg
                         aria-hidden="true"
                         width="18"
@@ -52,44 +71,51 @@ $photo = function (array $item) use ($isTodo): string {
         </div>
     </header>
 
-    <section class="chapter beginning" id="khoi-dau" data-chapter>
+    <section class="chapter beginning" id="khoi-dau">
         <div class="wrap beginning-grid">
             <div class="beginning-text">
-                <p class="chapter-intro" data-reveal><?= $text($recap['beginning']['intro']) ?></p>
-                <p class="body" data-reveal><?= $text($recap['beginning']['direction']) ?></p>
+                <p class="chapter-intro"<?= i18n('recap.beginning.intro') ?> data-reveal>
+                    <?= $text(message('recap.beginning.intro')) ?>
+                </p>
+                <p class="body"<?= i18n('recap.beginning.direction') ?> data-reveal>
+                    <?= $text(message('recap.beginning.direction')) ?>
+                </p>
             </div>
 
             <div class="diary" data-reveal="diary">
                 <div class="diary-page diary-left">
-                    <p class="diary-date"><?= $text($recap['beginning']['date']) ?></p>
+                    <p class="diary-date"<?= i18n('recap.beginning.date') ?>>
+                        <?= $text(message('recap.beginning.date')) ?>
+                    </p>
                     <figure class="polaroid tilt-l">
-                        <?= $photo([
-                            'src' => $recap['beginning']['image'],
-                            'note' => $recap['beginning']['image_note'],
-                        ]) ?>
+                        <?= $photo(['src' => $recap['beginning']['image']], 'recap.beginning.image_note') ?>
                     </figure>
                 </div>
                 <div class="diary-page diary-right">
-                    <p class="diary-head">Những điều chúng ta tự hứa</p>
+                    <p class="diary-head"<?= i18n('recap.beginning.promises_title') ?>>
+                        <?= $copy('beginning.promises_title') ?>
+                    </p>
                     <ol class="diary-goals">
-                        <?php foreach ($recap['beginning']['goals'] as $goal): ?>
-                            <li><?= $text($goal) ?></li>
+                        <?php foreach (messageList('recap.beginning.goals') as $goalIndex => $goal): ?>
+                            <li<?= i18n("recap.beginning.goals.{$goalIndex}") ?>><?= $text($goal) ?></li>
                         <?php endforeach; ?>
                     </ol>
-                    <p class="diary-foot"><?= $text($recap['beginning']['first_steps']) ?></p>
+                    <p class="diary-foot"<?= i18n('recap.beginning.first_steps') ?>>
+                        <?= $text(message('recap.beginning.first_steps')) ?>
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="chapter celebrations" id="ngay-hoi" data-chapter>
+    <section class="chapter celebrations" id="ngay-hoi">
         <div class="wrap">
             <div class="chapter-head">
-                <h2 class="chapter-title heading-primary" data-reveal="title">
-                    Một năm rực rỡ sắc màu
+                <h2 class="chapter-title heading-primary"<?= i18n('recap.celebrations.title') ?> data-reveal="title">
+                    <?= $copy('celebrations.title') ?>
                 </h2>
-                <p class="chapter-intro" data-reveal>
-                    <?= $text($recap['celebrations']['intro']) ?>
+                <p class="chapter-intro"<?= i18n('recap.celebrations.intro') ?> data-reveal>
+                    <?= $text(message('recap.celebrations.intro')) ?>
                 </p>
             </div>
 
@@ -101,13 +127,15 @@ $photo = function (array $item) use ($isTodo): string {
         </div>
     </section>
 
-    <section class="chapter trips" id="chuyen-di" data-chapter>
+    <section class="chapter trips" id="chuyen-di">
         <div class="wrap">
             <div class="chapter-head">
-                <h2 class="chapter-title heading-primary" data-reveal="title">
-                    Những chuyến đi<br>cùng nhau
+                <h2 class="chapter-title heading-primary"<?= i18n('recap.trips.title') ?> data-reveal="title">
+                    <?= $copy('trips.title') ?>
                 </h2>
-                <p class="chapter-intro" data-reveal><?= $text($recap['trips']['intro']) ?></p>
+                <p class="chapter-intro"<?= i18n('recap.trips.intro') ?> data-reveal>
+                    <?= $text(message('recap.trips.intro')) ?>
+                </p>
             </div>
 
             <?php
@@ -118,13 +146,16 @@ $photo = function (array $item) use ($isTodo): string {
         </div>
     </section>
 
-    <section class="chapter people" id="con-nguoi" data-chapter>
+    <section class="chapter people" id="con-nguoi">
         <div class="wrap">
             <div class="chapter-head">
-                <h2 class="chapter-title heading-primary" data-reveal="title">
-                    Những con người<br>tạo nên hành trình
+                <?php // Xuống dòng (\n) trong nội dung => <br> (i18n.js giữ cách xuống dòng khi đổi ngôn ngữ) ?>
+                <h2 class="chapter-title heading-primary"<?= i18n('recap.people.title') ?> data-reveal="title">
+                    <?= nl2br($copy('people.title'), false) ?>
                 </h2>
-                <p class="chapter-intro" data-reveal><?= $text($recap['people']['intro']) ?></p>
+                <p class="chapter-intro"<?= i18n('recap.people.intro') ?> data-reveal>
+                    <?= $text(message('recap.people.intro')) ?>
+                </p>
             </div>
 
             <ul class="salon">
@@ -136,9 +167,10 @@ $photo = function (array $item) use ($isTodo): string {
                             class="<?= in_array($salonSlot, [1, 4], true) ? 'f-torn' : 'f-white' ?>"
                             tabindex="0"
                         >
-                            <?= $photo($peoplePhoto) ?>
-                            <figcaption class="salon-cap">
-                                <?= $text($peoplePhoto['note']) ?>
+                            <?php $noteKey = "recap.people.photos.{$photoIndex}"; ?>
+                            <?= $photo($peoplePhoto, $noteKey) ?>
+                            <figcaption class="salon-cap"<?= findMessage($noteKey) !== null ? i18n($noteKey) : '' ?>>
+                                <?= $text(findMessage($noteKey)) ?>
                             </figcaption>
                         </figure>
                     </li>
@@ -147,16 +179,24 @@ $photo = function (array $item) use ($isTodo): string {
         </div>
     </section>
 
-    <section class="chapter moments" id="khoanh-khac" data-chapter>
+    <section class="chapter moments" id="khoanh-khac">
         <div class="wrap moments-head">
             <div>
-                <h2 class="chapter-title heading-primary" data-reveal="title">
-                    Những khoảnh khắc<br>không quên
+                <h2 class="chapter-title heading-primary"<?= i18n('recap.moments.title') ?> data-reveal="title">
+                    <?= $copy('moments.title') ?>
                 </h2>
-                <p class="chapter-intro" data-reveal><?= $text($recap['moments']['intro']) ?></p>
+                <p class="chapter-intro"<?= i18n('recap.moments.intro') ?> data-reveal>
+                    <?= $text(message('recap.moments.intro')) ?>
+                </p>
             </div>
             <div class="album-nav">
-                <button type="button" class="album-btn" data-album="-1" aria-label="Ảnh trước">
+                <button
+                    type="button"
+                    class="album-btn"
+                    data-album="-1"
+                    aria-label="<?= $copy('moments.prev') ?>"
+                    <?= i18n(null, [], ['aria-label' => 'recap.moments.prev']) ?>
+                >
                     <svg
                         aria-hidden="true"
                         width="20"
@@ -169,7 +209,13 @@ $photo = function (array $item) use ($isTodo): string {
                         stroke-linejoin="round"
                     ><path d="M15 6l-6 6 6 6"/></svg>
                 </button>
-                <button type="button" class="album-btn" data-album="1" aria-label="Ảnh tiếp theo">
+                <button
+                    type="button"
+                    class="album-btn"
+                    data-album="1"
+                    aria-label="<?= $copy('moments.next') ?>"
+                    <?= i18n(null, [], ['aria-label' => 'recap.moments.next']) ?>
+                >
                     <svg
                         aria-hidden="true"
                         width="20"
@@ -185,27 +231,37 @@ $photo = function (array $item) use ($isTodo): string {
             </div>
         </div>
 
-        <ul class="album" tabindex="0" aria-label="Album khoảnh khắc, cuộn ngang để xem thêm">
+        <ul
+            class="album"
+            tabindex="0"
+            aria-label="<?= $copy('moments.album_label') ?>"
+            <?= i18n(null, [], ['aria-label' => 'recap.moments.album_label']) ?>
+        >
             <?php foreach ($recap['moments']['photos'] as $photoIndex => $momentPhoto): ?>
                 <li class="album-item">
                     <figure class="polaroid <?= $photoIndex % 2 ? 'tilt-r' : 'tilt-l' ?>">
-                        <?= $photo($momentPhoto) ?>
-                        <figcaption><?= $text($momentPhoto['note']) ?></figcaption>
+                        <?php $noteKey = "recap.moments.photos.{$photoIndex}"; ?>
+                        <?= $photo($momentPhoto, $noteKey) ?>
+                        <figcaption<?= findMessage($noteKey) !== null ? i18n($noteKey) : '' ?>>
+                            <?= $text(findMessage($noteKey)) ?>
+                        </figcaption>
                     </figure>
                 </li>
             <?php endforeach; ?>
         </ul>
     </section>
 
-    <section class="chapter closing" id="chuong-moi" data-chapter>
+    <section class="chapter closing" id="chuong-moi">
         <div class="wrap closing-inner">
             <div class="letter" data-reveal>
-                <p><?= $text($recap['closing']['looking_back']) ?></p>
-                <p><?= $text($recap['closing']['thanks']) ?></p>
-                <p><?= $text($recap['closing']['next_year']) ?></p>
+                <?php foreach (['looking_back', 'thanks', 'next_year'] as $letterPart): ?>
+                    <p<?= i18n("recap.closing.{$letterPart}") ?>><?= $text(message("recap.closing.{$letterPart}")) ?></p>
+                <?php endforeach; ?>
             </div>
 
-            <p class="closing-message" data-reveal><?= $text($recap['closing']['message']) ?></p>
+            <p class="closing-message"<?= i18n('recap.closing.message') ?> data-reveal>
+                <?= $text(message('recap.closing.message')) ?>
+            </p>
         </div>
     </section>
 </main>

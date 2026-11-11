@@ -12,18 +12,21 @@
  */
 
 $deadline = stringField($event, 'rsvp_deadline');
-$deadlineText = $deadline !== '' ? (new DateTimeImmutable($deadline))->format('d/m/Y') : '';
+// Hạn phản hồi theo định dạng ngày của từng ngôn ngữ (đổi ngôn ngữ tại chỗ cần đủ các bản)
+$leadArgs = $deadline !== ''
+    ? ['deadline' => localized(fn (string $locale) => formatDate(new DateTimeImmutable($deadline), $locale))]
+    : null;
 ?>
 <section class="page page-rsvp" id="xac-nhan" aria-labelledby="rsvp-title">
     <div class="rsvp-wrap">
         <header class="rsvp-intro">
-            <h2 class="rsvp-title heading-primary" id="rsvp-title" data-reveal style="--d: 1">
+            <h2 class="rsvp-title heading-primary" id="rsvp-title"<?= i18n('rsvp.title') ?> data-reveal style="--d: 1">
                 <?= e(message('rsvp.title')) ?>
             </h2>
 
-            <?php if ($rsvp === null && $deadlineText !== ''): ?>
-                <p class="rsvp-lead" data-reveal style="--d: 2">
-                    <?= e(message('rsvp.lead', ['deadline' => $deadlineText])) ?>
+            <?php if ($rsvp === null && $leadArgs !== null): ?>
+                <p class="rsvp-lead"<?= i18n('rsvp.lead', $leadArgs) ?> data-reveal style="--d: 2">
+                    <?= e(message('rsvp.lead', $leadArgs)) ?>
                 </p>
             <?php endif; ?>
         </header>

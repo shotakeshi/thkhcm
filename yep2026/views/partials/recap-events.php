@@ -1,5 +1,6 @@
 <?php
 // Danh sách sự kiện của chương 03–04 (partials/recap.php).
+// Ảnh: config/recap.php; nội dung chữ theo 'key': lang/{vi,en}/recap.php (recap.events.{key}).
 // Bố cục cắt dán theo số ảnh: config/recap-collage.php.
 $collageLayouts = loadConfig('recap-collage');
 
@@ -12,6 +13,8 @@ $gridArea = fn (array $position): string => "{$position['top_row']}"
 <div class="events is-<?= e($style) ?>">
     <?php foreach ($events as $eventIndex => $memory): ?>
         <?php
+        $copyKey = "recap.events.{$memory['key']}";
+        $eventTime = message("{$copyKey}.time");
         $photos = array_values($memory['photos']);
         $photoCount = count($photos);
         $layout = $collageLayouts[$style][$photoCount] ?? null;
@@ -24,11 +27,11 @@ $gridArea = fn (array $position): string => "{$position['top_row']}"
         ?>
         <article class="event <?= $eventIndex % 2 ? 'is-flip' : '' ?>">
             <header class="event-head" data-reveal>
-                <?php if (trim($memory['time']) !== ''): ?>
-                    <p class="event-time"><?= $text($memory['time']) ?></p>
+                <?php if (trim($eventTime) !== ''): ?>
+                    <p class="event-time"<?= i18n("{$copyKey}.time") ?>><?= $text($eventTime) ?></p>
                 <?php endif; ?>
-                <h3 class="event-title"><?= $text($memory['title']) ?></h3>
-                <p class="body"><?= $text($memory['story']) ?></p>
+                <h3 class="event-title"<?= i18n("{$copyKey}.title") ?>><?= $text(message("{$copyKey}.title")) ?></h3>
+                <p class="body"<?= i18n("{$copyKey}.story") ?>><?= $text(message("{$copyKey}.story")) ?></p>
             </header>
 
             <div
@@ -58,7 +61,7 @@ $gridArea = fn (array $position): string => "{$position['top_row']}"
                             "
                         >
                             <figure class="photo-frame f-<?= e($slot['frame']) ?>">
-                                <?= $photo($eventPhoto) ?>
+                                <?= $photo($eventPhoto, "{$copyKey}.photos.{$photoIndex}") ?>
                             </figure>
                         </li>
                     <?php endforeach; ?>

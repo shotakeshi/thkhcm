@@ -1,5 +1,3 @@
-/* ===== Section Xác nhận tham gia (#xac-nhan): nền chung của trang + vàng của theme.css ===== */
-/* Màu và spacing token lấy từ theme.css. PC (>=900px): chữ bên trái, thẻ form bên phải (container chung với Recap). SP: xếp dọc. */
 :root {
     --rsvp-field: rgba(255, 255, 255, .05);
     --rsvp-focus: 0 0 0 4px var(--color-glow);
@@ -18,16 +16,15 @@
 
 .rsvp-intro {
     text-align: center;
-    container-type: inline-size; /* để tiêu đề co chữ theo bề rộng cột (cqw) */
+    container-type: inline-size;
 }
 
-/* Chữ vàng kim loại (gradient clip) lấy từ .heading-primary (theme.css), ở đây chỉ đặt kiểu chữ */
 .rsvp-title {
     margin: 0;
-    padding-top: .12em; /* chừa chỗ dấu tiếng Việt khi clip text; padding ngang lấy từ .heading-primary (theme.css) */
+    padding-top: .12em;
     font-family: var(--font-script), var(--font-heading);
     font-size: min(calc(var(--text-section-title) * 1.2), 12cqw);
-    white-space: nowrap; /* tiêu đề luôn nằm trên 1 dòng */
+    white-space: nowrap;
     font-weight: 400;
     letter-spacing: var(--tracking-heading);
     line-height: var(--line-height-heading);
@@ -39,7 +36,6 @@
     color: var(--color-text-muted);
 }
 
-/* Thẻ form */
 .rsvp-card {
     padding: var(--card-padding);
     border: 1px solid var(--hairline);
@@ -179,7 +175,6 @@
 }
 
 .rsvp-done-icon {
-    position: relative;
     width: 56px;
     height: 56px;
     padding: 14px;
@@ -198,7 +193,6 @@
     font-weight: var(--weight-heading);
 }
 
-/* Ô nhập Full Name / Email: cùng nền, viền, bo góc với lựa chọn tham dự */
 .rsvp-input {
     display: block;
     width: 100%;
@@ -209,7 +203,7 @@
     background: var(--rsvp-field);
     color: var(--color-text);
     font-family: inherit;
-    font-size: max(16px, var(--text-body)); /* >= 16px: iOS không tự zoom khi focus */
+    font-size: max(16px, var(--text-body));
     transition: border-color .2s ease, box-shadow .2s ease;
 }
 
@@ -228,7 +222,6 @@
     border-color: var(--color-danger);
 }
 
-/* Link mời: tên và email lấy từ danh sách khách, không cho sửa */
 .rsvp-input[readonly] {
     color: var(--color-text-muted);
     cursor: default;
@@ -241,7 +234,6 @@
     text-align: center;
 }
 
-/* Đang gửi: khoá nút, vòng xoay nhỏ trước nhãn */
 .rsvp-submit:disabled {
     cursor: progress;
     filter: saturate(.7) brightness(.92);
@@ -266,7 +258,6 @@
     }
 }
 
-/* Thông tin đã xác nhận */
 .rsvp-summary {
     display: grid;
     gap: var(--space-2);
@@ -316,42 +307,18 @@
     color: var(--color-text);
 }
 
-/* PC: chữ bên trái, thẻ form bên phải; nền ngang */
 @media (min-width: 900px) {
     .rsvp-wrap {
-        grid-template-columns: minmax(0, 1fr) minmax(380px, 480px);
         align-items: center;
-        gap: var(--column-gap);
-        width: min(100%, var(--container-max));
-    }
-
-    .rsvp-intro {
-        text-align: left;
+        margin-inline: auto;
     }
 
     .rsvp-lead {
         max-width: 34ch;
-    }
-}
-
-/* Tra cứu vé + Xác nhận tham dự: tiêu đề và form cùng 1 cột, căn giữa (cả PC) */
-@media (min-width: 900px) {
-    .page-rsvp .rsvp-wrap {
-        grid-template-columns: minmax(0, 1fr);
-        gap: var(--space-head-content);
-        width: min(100%, 520px);
         margin-inline: auto;
     }
 
-    .page-rsvp .rsvp-intro {
-        text-align: center;
-    }
-
-    .page-rsvp .rsvp-lead {
-        margin-inline: auto;
-    }
-
-    .page-rsvp .rsvp-card {
+    .rsvp-card {
         width: 100%;
     }
 }
@@ -360,15 +327,4 @@
     * {
         transition: none !important;
     }
-}
-
-/* Sợi chỉ vàng nối dấu ✓ xuống lời cảm ơn, tiếp nối seam phía dưới */
-.rsvp-done-icon::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 100%;
-    width: 1px;
-    height: var(--space-4);
-    background: linear-gradient(var(--color-primary), transparent);
 }
