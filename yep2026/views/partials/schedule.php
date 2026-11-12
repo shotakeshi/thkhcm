@@ -12,7 +12,8 @@ if (!$hasProgram) {
     return;
 }
 
-// Độ trễ reveal tăng dần theo thứ tự xuất hiện: ảnh → đầu mục → các mốc → dress code
+// --reveal-order tăng dần theo thứ tự xuất hiện: ảnh → đầu mục → các mốc → dress code
+// (độ trễ = --reveal-order × --reveal-stagger, xem theme.css)
 $delay = 0;
 ?>
 <section
@@ -27,7 +28,7 @@ $delay = 0;
                 <div
                     class="program-photo"
                     data-reveal
-                    style="--d: <?= $delay++ ?>"
+                    style="--reveal-order: <?= $delay++ ?>"
                     aria-hidden="true"
                 >
                     <img src="<?= e($programImage) ?>" alt="" loading="lazy" decoding="async">
@@ -37,14 +38,14 @@ $delay = 0;
             <div class="program-body">
                 <?php if ($hasSchedule): ?>
                     <header class="program-head">
-                        <h2 class="program-heading" data-reveal style="--d: <?= $delay++ ?>">
+                        <h2 class="program-heading" data-reveal style="--reveal-order: <?= $delay++ ?>">
                             <?php if ($programTitle !== ''): ?>
                                 <span class="program-title heading-primary"<?= i18n('program.title') ?>>
                                     <?= e($programTitle) ?>
                                 </span>
                             <?php endif; ?>
                         </h2>
-                        <div class="program-date" data-reveal style="--d: <?= $delay++ ?>">
+                        <div class="program-date" data-reveal style="--reveal-order: <?= $delay++ ?>">
                             <?php if ($dateLabel !== ''): ?>
                                 <span class="eyebrow program-date-label"<?= i18n('program.date_label') ?>>
                                     <?= e($dateLabel) ?>
@@ -56,7 +57,7 @@ $delay = 0;
 
                     <ol class="program-list" data-progress>
                         <?php foreach ($schedule as $item): ?>
-                            <li class="program-item" data-reveal style="--d: <?= $delay++ ?>">
+                            <li class="program-item" data-reveal style="--reveal-order: <?= $delay++ ?>">
                                 <?php if (stringField($item, 'time') !== ''): ?>
                                     <span class="program-time tnum"><?= e($item['time']) ?></span>
                                 <?php endif; ?>
@@ -68,7 +69,7 @@ $delay = 0;
                 <?php endif; ?>
 
                 <?php if ($hasDress): ?>
-                    <div class="program-dress" data-reveal style="--d: <?= $delay++ ?>">
+                    <div class="program-dress" data-reveal style="--reveal-order: <?= $delay++ ?>">
                         <?php if ($dressCodeLabel !== ''): ?>
                             <h3 class="program-dress-label heading-primary"<?= i18n('program.dress_code_label') ?>>
                                 <?= e($dressCodeLabel) ?>

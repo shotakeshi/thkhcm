@@ -9,15 +9,15 @@
 <section class="page page-rsvp page-find-ticket" id="tim-ve" aria-labelledby="find-ticket-title">
     <div class="rsvp-wrap">
         <header class="rsvp-intro">
-            <h2 class="rsvp-title heading-primary" id="find-ticket-title"<?= i18n('lookup.title') ?> data-reveal style="--d: 0">
+            <h2 class="rsvp-title heading-primary" id="find-ticket-title"<?= i18n('lookup.title') ?> data-reveal style="--reveal-order: 0">
                 <?= e(message('lookup.title')) ?>
             </h2>
-            <p class="rsvp-lead"<?= i18n('lookup.lead') ?> data-reveal style="--d: 1">
+            <p class="rsvp-lead"<?= i18n('lookup.lead') ?> data-reveal style="--reveal-order: 1">
                 <?= e(message('lookup.lead')) ?>
             </p>
         </header>
 
-        <div class="rsvp-card" id="ticket-lookup-card" data-reveal style="--d: 3">
+        <div class="rsvp-card" id="ticket-lookup-card" data-reveal style="--reveal-order: 3">
             <?= $lookupCardHtml ?? renderPartial('find-ticket-card.php') ?>
         </div>
     </div>

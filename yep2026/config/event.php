@@ -15,7 +15,6 @@ return [
     'monogram'         => '26',
     'rsvp_deadline'    => '2026-11-18',
     'invite' => [
-        // Ảnh nền riêng cho thiệp/vé. Để trống => dùng nền chung của cả landing
         // (public/css/theme.css: --page-bg-image), giữ một khung cảnh xuyên suốt.
         'background'         => '',
         'background_desktop' => 'images/4.mp4',

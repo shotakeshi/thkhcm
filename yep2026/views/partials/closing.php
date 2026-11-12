@@ -34,7 +34,7 @@ if ($closingLead === '' && $closingTitle === '') {
     <?php endif; ?>
 
     <div class="closing-inner">
-        <h2 class="closing-heading" data-reveal style="--d: 0">
+        <h2 class="closing-heading" data-reveal style="--reveal-order: 0">
             <?php if ($closingLead !== ''): ?>
                 <span class="closing-lead"<?= i18n('closing.lead') ?>><?= e($closingLead) ?></span>
             <?php endif; ?>
@@ -43,7 +43,7 @@ if ($closingLead === '' && $closingTitle === '') {
             <?php endif; ?>
         </h2>
         <?php if ($closingNote !== ''): ?>
-            <p class="closing-note"<?= i18n('closing.note') ?> data-reveal style="--d: 1"><?= e($closingNote) ?></p>
+            <p class="closing-note"<?= i18n('closing.note') ?> data-reveal style="--reveal-order: 1"><?= e($closingNote) ?></p>
         <?php endif; ?>
         <?php if ($closingCopyright !== '' || $closingCredit !== ''): ?>
             <?php /* Không dùng data-reveal: footer nằm sát đáy trang, rơi vào vùng -12% rootMargin của reveal (story.js) nên không bao giờ được hiện. */ ?>

@@ -47,11 +47,12 @@ $gridArea = fn (array $position): string => "{$position['top_row']}"
                 <ul class="collage-list">
                     <?php foreach ($photos as $photoIndex => $eventPhoto): ?>
                         <?php $slot = $photoSlots[$photoIndex % count($photoSlots)]; ?>
+                        <?php // --reveal-order = chỉ số ảnh: ảnh hiện lần lượt, mỗi ảnh trễ .12s (recap.css .collage-item) ?>
                         <li
                             class="collage-item is-<?= e($slot['frame']) ?> <?= isset($slot['decoration']) ? 'has-' . e($slot['decoration']) : '' ?> <?= isset($slot['fit']) ? 'fit-' . e($slot['fit']) : '' ?>"
                             data-reveal
                             style="
-                                --d: <?= $photoIndex ?>;
+                                --reveal-order: <?= $photoIndex ?>;
                                 --tilt: <?= $slot['tilt_degrees'] ?>deg;
                                 --photo-aspect-ratio: <?= isset($slot['width_pixels'])
                                     ? (int) $slot['width_pixels'] . ' / ' . (int) $slot['height_pixels']

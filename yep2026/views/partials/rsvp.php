@@ -20,18 +20,18 @@ $leadArgs = $deadline !== ''
 <section class="page page-rsvp" id="xac-nhan" aria-labelledby="rsvp-title">
     <div class="rsvp-wrap">
         <header class="rsvp-intro">
-            <h2 class="rsvp-title heading-primary" id="rsvp-title"<?= i18n('rsvp.title') ?> data-reveal style="--d: 1">
+            <h2 class="rsvp-title heading-primary" id="rsvp-title"<?= i18n('rsvp.title') ?> data-reveal style="--reveal-order: 1">
                 <?= e(message('rsvp.title')) ?>
             </h2>
 
             <?php if ($rsvp === null && $leadArgs !== null): ?>
-                <p class="rsvp-lead"<?= i18n('rsvp.lead', $leadArgs) ?> data-reveal style="--d: 2">
+                <p class="rsvp-lead"<?= i18n('rsvp.lead', $leadArgs) ?> data-reveal style="--reveal-order: 2">
                     <?= e(message('rsvp.lead', $leadArgs)) ?>
                 </p>
             <?php endif; ?>
         </header>
 
-        <div class="rsvp-card" id="rsvp-card" data-rsvp-card data-reveal style="--d: 4">
+        <div class="rsvp-card" id="rsvp-card" data-rsvp-card data-reveal style="--reveal-order: 4">
             <?php require __DIR__ . '/rsvp-card.php'; ?>
         </div>
     </div>

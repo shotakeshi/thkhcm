@@ -280,7 +280,8 @@
         transition:
             opacity var(--reveal-dur) var(--reveal-ease),
             transform var(--reveal-dur) var(--reveal-ease);
-        transition-delay: calc(var(--d, 0) * var(--reveal-stagger));
+        /* Phần tử thứ n (--reveal-order, đặt trong view) hiện sau n × --reveal-stagger */
+        transition-delay: calc(var(--reveal-order, 0) * var(--reveal-stagger));
     }
 
     .js [data-reveal="title"] {
@@ -620,7 +621,9 @@
             transform .9s var(--reveal-ease),
             rotate .6s var(--ease-out),
             translate .6s var(--ease-out);
-        transition-delay: calc(var(--d, 0) * .12s), calc(var(--d, 0) * .12s), 0s, 0s;
+        /* Theo thứ tự trong transition: opacity, transform trễ theo --reveal-order (= chỉ số ảnh, recap-events.php)
+           để ảnh hiện nối đuôi nhau; rotate, translate không trễ để nghiêng/đung đưa phản hồi ngay */
+        transition-delay: calc(var(--reveal-order, 0) * .12s), calc(var(--reveal-order, 0) * .12s), 0s, 0s;
     }
 
     .js .collage-item[data-reveal].is-in {

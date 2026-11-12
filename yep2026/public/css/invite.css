@@ -156,9 +156,7 @@ img.brand {
     background: var(--paper);
     color: #1e3a64;
     transition: opacity .38s ease;
-    --navy: #1e3a64;
     --muted: #56698a;
-    --gold: #a8841f;
     --focus: 0 0 0 4px rgba(168, 132, 31, .35);
 }
 
@@ -450,7 +448,8 @@ img.brand {
 
 .iv {
     animation: rise .8s var(--ease-out) both;
-    animation-delay: calc(.15s + var(--d, 0) * .18s);
+    /* Khối thiệp hiện lần lượt: chờ .15s rồi mỗi bậc --reveal-order (invite.php: 1, 2, 3) trễ thêm .18s */
+    animation-delay: calc(.15s + var(--reveal-order, 0) * .18s);
 }
 
 @keyframes card-drift {
@@ -737,12 +736,6 @@ img.brand {
     height: 17px;
 }
 
-.ticket-note {
-    margin: 0;
-    font-size: var(--text-caption);
-    color: var(--color-text-muted);
-}
-
 .toast-region {
     position: fixed;
     left: 0;
@@ -988,6 +981,7 @@ img.brand {
 }
 
 .program-dress-label {
+    margin: 0;
     font-size: calc(var(--text-section-title) * 1.2);
     font-family: var(--font-script), var(--font-heading);
     font-weight: 400;
@@ -1317,17 +1311,6 @@ img.brand {
         height: 16px;
     }
 
-    .ticket-note {
-        width: fit-content;
-        max-width: 100%;
-        margin: var(--space-2) auto 0;
-        padding: var(--space-2) var(--space-3);
-        border-radius: var(--radius-sm);
-        background: var(--color-surface);
-        line-height: 1.5;
-        text-align: center;
-    }
-
     .toast {
         bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
     }
@@ -1590,10 +1573,6 @@ img.brand {
         min-height: 100vh;
         min-height: 100svh;
     }
-}
-
-.program-dress-label {
-    margin: 0;
 }
 
 .page-schedule .program-title {

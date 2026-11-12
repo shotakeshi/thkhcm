@@ -8,6 +8,5 @@ return [
     'password'   => getenv('SMTP_PASSWORD') ?: '',
     'from_email' => getenv('MAIL_FROM_ADDRESS') ?: '',
     'from_name'  => getenv('MAIL_FROM_NAME') ?: 'THK HOLDINGS VIETNAM',
-    // Số giây chờ máy chủ SMTP phản hồi mỗi bước
     'timeout'    => 15,
 ];

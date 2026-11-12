@@ -45,14 +45,14 @@ $photo = function (array $item, ?string $noteKey = null) use ($isTodo): string {
     <!-- 01 · Mở đầu: vào vùng nội dung, ánh sáng nền sáng dần -->
     <header class="hero" id="mo-dau">
         <div class="hero-inner">
-            <p class="hero-sub chapter-title"<?= i18n('recap.hero.title') ?> data-reveal style="--d: 1">
+            <p class="hero-sub chapter-title"<?= i18n('recap.hero.title') ?> data-reveal style="--reveal-order: 1">
                 <?= $copy('hero.title') ?>
             </p>
-            <p class="hero-lead"<?= i18n('recap.hero.lead') ?> data-reveal style="--d: 2">
+            <p class="hero-lead"<?= i18n('recap.hero.lead') ?> data-reveal style="--reveal-order: 2">
                 <?= $text(message('recap.hero.lead')) ?>
             </p>
             <?php // Reveal ở lớp bọc: transition hover của .cta không bị transition reveal đè ?>
-            <div data-reveal style="--d: 3">
+            <div data-reveal style="--reveal-order: 3">
                 <a class="cta" href="#khoi-dau">
                     <span<?= i18n('recap.hero.cta') ?>><?= $copy('hero.cta') ?></span>
                     <svg

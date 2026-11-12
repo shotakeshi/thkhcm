@@ -186,7 +186,7 @@ $locationLabel = trim(message('invite.location_label'));
                         <?php endif; ?>
                     </div>
 
-                    <div class="card-theme iv intro" style="--d: 1">
+                    <div class="card-theme iv intro" style="--reveal-order: 1">
                         <?php if ($invite['logo'] !== ''): ?>
                             <img
                                 class="card-logo"
@@ -204,7 +204,7 @@ $locationLabel = trim(message('invite.location_label'));
                         <?php endif; ?>
                     </div>
 
-                    <div class="card-when iv intro" style="--d: 2">
+                    <div class="card-when iv intro" style="--reveal-order: 2">
                         <div class="card-side"><?= e($weekdayLabel) ?></div>
                         <div class="card-date">
                             <span class="card-month"><?= e($monthLabel) ?></span>
@@ -216,7 +216,7 @@ $locationLabel = trim(message('invite.location_label'));
                         </div>
                     </div>
 
-                    <div class="card-where iv intro" style="--d: 3">
+                    <div class="card-where iv intro" style="--reveal-order: 3">
                         <?php if ($locationLabel !== ''): ?>
                             <div class="card-label"<?= i18n('invite.location_label') ?>><?= e($locationLabel) ?></div>
                         <?php endif; ?>

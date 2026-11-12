@@ -1,8 +1,7 @@
 /* ===== Theme Black & Gold: nơi duy nhất khai báo màu chủ đề + nền chung ===== */
-/* Nạp đầu tiên ở landing và trang link lỗi (views/partials/head.php). Các file kia chỉ dùng lại token, không tự đặt màu mới.
+/* Nạp đầu tiên ở landing và trang link lỗi (views/partials/head.php).
    Trang admin (public/admin.php) dùng app.css riêng, không nạp file này. */
 :root {
-    /* Matte Black + Metallic Gold: champagne (light) -> metallic (primary) -> bronze (dark) */
     --color-bg: #050505;
     --color-surface: rgba(8, 7, 6, .62);
     --color-surface-border: rgba(192, 142, 73, .45);
@@ -92,7 +91,6 @@
     --weight-body: 400;
     --weight-label: 500;
 
-    --tracking-hero: .08em;
     --tracking-heading: .02em;
     --tracking-label: .26em;
 
@@ -102,6 +100,11 @@
     --ease-out: cubic-bezier(.22, 1, .36, 1);
     --reveal-dur: .7s;
     --reveal-dur-title: 1.2s;
+    /* Khoảng trễ giữa hai phần tử liền nhau khi reveal lần lượt.
+       --reveal-order (không khai báo ở đây): số thứ tự xuất hiện 0, 1, 2… do view đặt inline trên từng phần tử,
+       vd style="--reveal-order: 2". CSS lấy độ trễ = --reveal-order × một bước trễ, nên phần tử hiện nối đuôi nhau.
+       Không đặt => 0 (không trễ). Mỗi nơi dùng tự chọn bước trễ: --reveal-stagger (story.css, recap.css [data-reveal]),
+       .12s (ảnh collage, recap.css), .18s (khối thiệp, invite.css .iv). */
     --reveal-stagger: .1s;
     --reveal-ease: var(--ease-out);
 }

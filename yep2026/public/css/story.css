@@ -36,7 +36,8 @@
 }
 
 .js .seam-after [data-reveal] {
-    transition-delay: calc(.15s + var(--d, 0) * var(--reveal-stagger));
+    /* Section ngay sau seam: chờ .15s cho seam chạy xong rồi mới reveal lần lượt theo --reveal-order */
+    transition-delay: calc(.15s + var(--reveal-order, 0) * var(--reveal-stagger));
 }
 
 @media (max-width: 640px) {
