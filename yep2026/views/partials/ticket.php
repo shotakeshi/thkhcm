@@ -2,15 +2,21 @@
 /**
  * Vé tham dự cá nhân, nằm ngay dưới thiệp trong cùng một trang cuộn.
  * Thiếu Lucky Draw Code / số bàn => "To be announced", không cho tải vé.
+ * Chưa lấy mã bàn (isTicketRevealed) => mã và số bàn chỉ là placeholder, HTML không chứa mã thật;
+ * nút "Get Table Number" gọi reveal-ticket.php rồi quay số tới mã thật (public/js/ticket.js).
  */
 
 $name = stringField($employee, 'name');
 $nameWords = preg_split('/\s+/u', $name, -1, PREG_SPLIT_NO_EMPTY);
-$luckyDrawCode = stringField($employee, 'luckyDrawCode');
-$tableNumber = stringField($employee, 'tableNumber');
+$canDownload = canDownloadTicket($employee);
+$isRevealed = $canDownload && isTicketRevealed($employee);
+// Chưa lấy mã: không đọc mã thật để không lọt vào HTML (placeholder khớp định dạng YEP26-xxxx, bàn.ghế)
+$luckyDrawCode = $isRevealed ? stringField($employee, 'luckyDrawCode') : '';
+$tableNumber = $isRevealed ? stringField($employee, 'tableNumber') : '';
 $isTableNumeric = ctype_digit($tableNumber);
 $tableText = $isTableNumeric ? sprintf('%02d', (int) $tableNumber) : $tableNumber;
-$canDownload = canDownloadTicket($employee);
+$needsReveal = $canDownload && !$isRevealed;
+$uuid = employeeUuid($employee);
 
 // Đốm gold: [x, y, đường kính, delay, thời lượng], toạ độ theo khung thiết kế 375×812
 $particles = [
@@ -71,8 +77,8 @@ $particles = [
                 <div class="ticket-details">
                     <div class="ticket-code-block">
                         <div class="eyebrow ticket-label">Lucky Draw Code</div>
-                        <?php if ($luckyDrawCode !== ''): ?>
-                            <div class="ticket-code tnum"><?= e($luckyDrawCode) ?></div>
+                        <?php if ($luckyDrawCode !== '' || $needsReveal): ?>
+                            <div class="ticket-code tnum" data-ticket-code><?= e($needsReveal ? 'YEP26-????' : $luckyDrawCode) ?></div>
                         <?php else: ?>
                             <div class="ticket-pending">
                                 <svg
@@ -98,26 +104,39 @@ $particles = [
 
                 <div class="ticket-stub-text">
                     <div class="ticket-table-caption">
-                        <?= $tableNumber !== '' ? 'Table Number' : 'To be announced' ?>
+                        <?= $tableNumber !== '' || $needsReveal ? 'Table Number' : 'To be announced' ?>
                     </div>
                 </div>
-                <div
-                    class="ticket-table a-table tnum"
-                    <?= $isTableNumeric ? 'data-count-to="' . (int) $tableNumber . '"' : '' ?>
-                ><?= $tableNumber !== '' ? e($tableText) : '—' ?></div>
+                <div class="ticket-table a-table tnum">
+                    <span
+                        class="ticket-table-code"
+                        data-ticket-table
+                        <?= $isTableNumeric ? 'data-count-to="' . (int) $tableNumber . '"' : '' ?>
+                    ><?= $needsReveal ? '??' : ($tableNumber !== '' ? e($tableText) : '—') ?></span>
+                </div>
             </section>
         </div>
 
         <div class="ticket-actions a-back">
             <div class="ticket-buttons">
+                <?php if ($needsReveal && $uuid !== null): ?>
+                    <button class="btn btn-primary" type="button" data-ticket-reveal data-uuid="<?= e($uuid) ?>">
+                        <span>Get Table Number</span>
+                    </button>
+                <?php endif; ?>
+                <?php // Chưa lấy mã: nút tải vé ẩn, chưa có data-code / data-table; ticket.js điền sau khi quay xong ?>
                 <button class="btn btn-primary" type="button"
                     <?php if ($canDownload): ?>
                         data-ticket-download
                         data-name="<?= e($name) ?>"
-                        data-code="<?= e($luckyDrawCode) ?>"
-                        data-table="<?= e($tableText) ?>"
                         data-script="<?= e($event['name']) ?>"
                         data-year="<?= e($event['year']) ?>"
+                        <?php if ($isRevealed): ?>
+                            data-code="<?= e($luckyDrawCode) ?>"
+                            data-table="<?= e($tableText) ?>"
+                        <?php else: ?>
+                            hidden
+                        <?php endif; ?>
                     <?php else: ?>
                         disabled
                     <?php endif; ?>>

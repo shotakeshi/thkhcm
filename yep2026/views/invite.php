@@ -261,6 +261,25 @@ $rsvpEnabled = isRsvpEnabled();
     </div>
 
     <?php require __DIR__ . '/partials/attendees.php'; ?>
+
+    <section class="party-map wrap">
+        <h2 class="eyebrow"<?= i18n('map.title') ?>><?= e(message('map.title')) ?></h2>
+        <div class="program">
+            <div class="program-body">
+                <img
+                    src="images/map.webp"
+                    alt="<?= e(message('map.title')) ?>"
+                    <?= i18n(null, [], ['alt' => 'map.title']) ?>
+                    width="1920"
+                    height="1072"
+                    loading="lazy"
+                    decoding="async"
+                    data-lightbox
+                >
+            </div>
+        </div>
+    </section>
+
     <?php require __DIR__ . '/partials/schedule.php'; ?>
 </div>
 

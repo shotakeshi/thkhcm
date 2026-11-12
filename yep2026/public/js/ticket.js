@@ -35,6 +35,13 @@ const TICKET_IMAGE = {
 
 const TOAST_MS = 2600;
 
+// ===== Lấy mã bàn: hiệu ứng quay số =====
+// Mã đã gán sẵn ở server; quay số chỉ là hiệu ứng, luôn dừng đúng mã reveal-ticket.php trả về.
+const SPIN_MS = 5000;
+// Số bàn dạng bàn.ghế (vd 1.10), không có số 0 đứng trước: khi quay random từng phần trong 1..MAX
+const MAX_TABLE = 10;
+const MAX_SEAT = 10;
+
 let toastTimer = null;
 
 // ===== Vẽ ảnh vé =====
@@ -396,12 +403,115 @@ async function onDownloadClick(downloadButton) {
     }
 }
 
+// ===== Lấy mã bàn =====
+const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+// Giữ nguyên phần trước dấu - cuối cùng (YEP26-), random từng ký tự phía sau (0-9), đúng số ký tự
+function randomLuckyCode(target) {
+    const i = target.lastIndexOf('-');
+
+    return target.slice(0, i + 1) + Array.from(target.slice(i + 1), () => rand(0, 9)).join('');
+}
+
+function randomTableCode() {
+    return `${rand(1, MAX_TABLE)}.${rand(1, MAX_SEAT)}`;
+}
+
+/**
+ * Đổi chữ liên tục trong SPIN_MS (nhanh lúc đầu, chậm dần), rồi dừng đúng target và thêm class winner.
+ * Khách bật giảm chuyển động => hiện target ngay (giống bộ đếm số bàn trong motion.js).
+ */
+function spin(el, target, randomFn) {
+    return new Promise((resolve) => {
+        const start = performance.now();
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        el.classList.remove('winner');
+        el.classList.add('running');
+
+        (function tick(now) {
+            const progress = reduced ? 1 : Math.min((now - start) / SPIN_MS, 1);
+
+            if (progress < 1) {
+                el.textContent = randomFn(target);
+                setTimeout(() => requestAnimationFrame(tick), 35 + Math.pow(progress, 3) * 300);
+                return;
+            }
+
+            el.textContent = target;
+            el.classList.replace('running', 'winner');
+            resolve();
+        })(start);
+    });
+}
+
+/**
+ * Gọi reveal-ticket.php. Lỗi mạng, HTTP lỗi hoặc thiếu mã => throw.
+ */
+async function requestReveal(uuid) {
+    const body = new FormData();
+    body.append('uuid', uuid);
+
+    const response = await fetch('reveal-ticket.php', {
+        method: 'POST',
+        body,
+        headers: {Accept: 'application/json'},
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data.ok || !data.isRevealed || !data.luckyDrawCode || !data.tableNumber) {
+        throw new Error(`Không lấy được mã bàn (HTTP ${response.status})`);
+    }
+
+    return data;
+}
+
+async function onRevealClick(revealButton) {
+    // Khoá ngay để bấm liên tục chỉ gọi API và quay một lần
+    if (revealButton.disabled) {
+        return;
+    }
+
+    revealButton.disabled = true;
+    revealButton.setAttribute('aria-busy', 'true');
+
+    const ticket = revealButton.closest('.page-ticket');
+    let data;
+
+    try {
+        data = await requestReveal(revealButton.dataset.uuid);
+    } catch (error) {
+        // Giữ placeholder, không hiện nút tải vé, cho bấm lại
+        console.error(error);
+        showToast('danger', 'We couldn’t get your table number. Please try again.');
+        revealButton.disabled = false;
+        revealButton.removeAttribute('aria-busy');
+        return;
+    }
+
+    await Promise.all([
+        spin(ticket.querySelector('[data-ticket-code]'), data.luckyDrawCode, randomLuckyCode),
+        spin(ticket.querySelector('[data-ticket-table]'), data.tableNumber, randomTableCode),
+    ]);
+
+    // Quay xong mới đổi nút: điền mã cho ảnh vé rồi hiện nút tải vé
+    const downloadButton = ticket.querySelector('[data-ticket-download]');
+    downloadButton.dataset.code = data.luckyDrawCode;
+    downloadButton.dataset.table = data.tableNumber;
+    revealButton.hidden = true;
+    downloadButton.hidden = false;
+    downloadButton.focus({preventScroll: true});
+}
+
 // ===== Khởi tạo =====
-// Nút tải vé có thể được chèn sau khi trang đã tải (gửi RSVP bằng fetch) => bắt click trên document
+// Nút tải vé / lấy mã bàn có thể được chèn sau khi trang đã tải (gửi RSVP bằng fetch) => bắt click trên document
 document.addEventListener('click', (event) => {
+    const revealButton = event.target.closest('[data-ticket-reveal]');
     const button = event.target.closest('[data-ticket-download]');
 
-    if (button) {
+    if (revealButton) {
+        onRevealClick(revealButton);
+    } else if (button) {
         onDownloadClick(button);
     }
 });

@@ -297,6 +297,15 @@ function canDownloadTicket(array $employee): bool
 }
 
 /**
+ * Khách đã bấm "lấy mã bàn" (revealedAt trong data.json). Chưa lấy => mọi response cho khách
+ * (trang link mời, RSVP, tra cứu vé) không được chứa mã Lucky Draw và số bàn.
+ */
+function isTicketRevealed(array $employee): bool
+{
+    return \App\Rsvp\GuestStore::isTimestamp($employee['revealedAt'] ?? null);
+}
+
+/**
  * Thông tin sự kiện từ config/event.php, kèm các phần ngày tháng tính sẵn.
  * Thứ, ngày dạng chữ theo ngôn ngữ: formatDate() / lang/ (date.*).
  */
@@ -385,8 +394,9 @@ function renderPartial(string $file, array $vars = []): string
 }
 
 /**
- * Phần vé trong phản hồi JSON (RSVP, tra cứu vé): slot #ve, toast và script tải vé.
+ * Phần vé trong phản hồi JSON (RSVP, tra cứu vé): slot #ve, toast và script tải vé / lấy mã bàn.
  * Không tham gia => slot chỉ còn seam, không có mã Lucky Draw, số bàn hay nút tải vé.
+ * Chưa lấy mã bàn (isRevealed false) => vé chỉ có placeholder, không chứa mã thật.
  */
 function ticketPayload(array $event, ?array $guest, bool $showTicket): array
 {
@@ -397,6 +407,7 @@ function ticketPayload(array $event, ?array $guest, bool $showTicket): array
 
     return [
         'attending'    => $showTicket,
+        'isRevealed'   => $showTicket && isTicketRevealed($guest),
         'ticketHtml'   => renderPartial('ticket-slot.php', [
             'event' => $event, 'employee' => $guest, 'showTicket' => $showTicket,
         ]),

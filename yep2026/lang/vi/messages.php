@@ -111,6 +111,10 @@ return [
         'empty'       => 'Chưa có người xác nhận tham gia.',
     ],
 
+    'map' => [
+        'title' => 'Sơ đồ bàn tiệc',
+    ],
+
     // Section Chương trình. Giờ từng mốc nằm ở config/event.php (program.schedule), tên mốc ở items theo 'key'
     'program' => [
         'label'            => 'Chương trình',

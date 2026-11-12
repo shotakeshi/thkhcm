@@ -707,6 +707,14 @@ img.brand {
     color: var(--color-primary-light);
 }
 
+/* Số bàn dạng bàn.ghế (1.1 → 10.10): rộng tối thiểu 5 ký tự để chữ không giật khi quay, cỡ chữ vừa vòng tròn */
+.ticket-table-code {
+    display: inline-block;
+    min-width: 5ch;
+    font-size: 36px;
+    text-align: center;
+}
+
 .ticket-table-caption {
     order: 3;
     font-family: var(--font-body);
@@ -734,6 +742,26 @@ img.brand {
 .ticket-buttons .btn svg {
     width: 17px;
     height: 17px;
+}
+
+/* .btn đặt display nên phải ẩn lại tường minh (nút tải vé trước khi lấy mã bàn) */
+.btn[hidden] {
+    display: none;
+}
+
+/* Lấy mã bàn (public/js/ticket.js): số nhảy khi quay, sáng lên khi dừng đúng mã */
+.ticket-code.running,
+.ticket-table-code.running {
+    animation: spin-shake .12s ease-in-out infinite alternate;
+}
+
+/* Mã Lucky Draw căn trái (PC) / giữa (mobile) => chỉ sáng lên, không phóng to để chữ không lệch */
+.ticket-code.winner {
+    animation: spin-glow .7s ease-in-out 3;
+}
+
+.ticket-table-code.winner {
+    animation: spin-win .7s ease-in-out 3;
 }
 
 .toast-region {
@@ -1051,6 +1079,46 @@ img.brand {
     max-height: none;
 }
 
+
+.party-map {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding-block: var(--space-10);
+}
+
+.party-map .program,
+.page-attendees .program,
+.page-schedule .program {
+    --program-max: calc(80vh * 1920 / 1072);
+}
+
+@supports (height: 1svh) {
+    .party-map .program,
+    .page-attendees .program,
+    .page-schedule .program {
+        --program-max: calc(80svh * 1920 / 1072);
+    }
+}
+
+.party-map .program {
+    width: min(100%, var(--program-max) + 2 * var(--program-pad));
+    min-height: 0;
+}
+
+.party-map .program-body {
+    padding: 0;
+}
+
+.party-map img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1920 / 1072;
+    border-radius: calc(var(--radius-lg) - var(--program-pad));
+}
+
 .attendee-empty {
     margin: var(--space-title-content) 0 0;
     padding-top: var(--space-3);
@@ -1111,6 +1179,11 @@ img.brand {
         max-width: var(--container-max);
         min-height: clamp(520px, 72vh, 720px);
         margin-inline: auto;
+    }
+
+    .page-attendees .program,
+    .page-schedule .program {
+        width: min(100%, var(--program-max) + 2 * var(--program-pad));
     }
 
     .program-photo {
@@ -1190,6 +1263,9 @@ img.brand {
 @keyframes wipe-y { from { clip-path: inset(50% 0 50% 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes pop { from { opacity: 0; transform: scale(.6); } 70% { opacity: 1; transform: scale(1.06); } to { opacity: 1; transform: scale(1); } }
 @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes spin-shake { from { transform: translateY(-2px); opacity: .75; } to { transform: translateY(2px); opacity: 1; } }
+@keyframes spin-win { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); text-shadow: 0 0 14px var(--color-primary-light); } }
+@keyframes spin-glow { 0%, 100% { text-shadow: none; } 50% { text-shadow: 0 0 14px var(--color-primary-light); } }
 
 @media (max-width: 1023px) {
     .ticket {
@@ -1320,6 +1396,10 @@ img.brand {
         font-size: 46px;
     }
 
+    .ticket-table-code {
+        font-size: 24px;
+    }
+
     .ticket-actions {
         width: 100%;
         max-width: 400px;
@@ -1423,6 +1503,7 @@ img.brand {
     .frame,
     .perf,
     .ticket-code,
+    .ticket-table-code,
     .tear-hint,
     .toast {
         animation: none !important;

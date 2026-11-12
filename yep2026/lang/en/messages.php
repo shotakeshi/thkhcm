@@ -97,6 +97,10 @@ return [
         'empty'       => 'No confirmed attendees yet.',
     ],
 
+    'map' => [
+        'title' => 'Seating Plan',
+    ],
+
     'program' => [
         'label'            => 'Program',
         'title'            => 'Event Schedule',

@@ -9,11 +9,13 @@ use RuntimeException;
 
 /**
  * Nguồn dữ liệu duy nhất của khách mời, vé và xác nhận tham dự (storage/data.json):
- * { "uuid": { guestType, email, name, luckyDrawCode, tableNumber, attendance, submittedAt, updatedAt? } }
+ * { "uuid": { guestType, email, name, luckyDrawCode, tableNumber, attendance, submittedAt, updatedAt?, revealedAt? } }
  * - guestType "0": khách có sẵn trong danh sách; "1": khách tự đăng ký (uuid do server sinh).
  * - attendance: null (chưa xác nhận) | "attending" | "declined"; submittedAt null khi chưa xác nhận.
  * - updatedAt: chỉ có khi admin đổi trạng thái (public/admin-rsvp.php); admin sửa vé
  *   (luckyDrawCode, tableNumber qua public/admin-ticket.php) không đổi updatedAt.
+ * - revealedAt: thời điểm khách bấm "lấy mã bàn" lần đầu (reveal()); thiếu hoặc null => chưa lấy mã,
+ *   mọi chỗ hiển thị vé cho khách phải ẩn mã Lucky Draw và số bàn. Ghi một lần, không bao giờ đổi.
  *
  * Đọc: không khoá, vì file chỉ bị thay bằng rename() nguyên tử. Ghi: mọi thay đổi đi qua mutate(),
  * trong exclusive lock của JsonFile::update(): đọc lại bản mới nhất, đổi đúng một record, kiểm tra các
@@ -150,6 +152,7 @@ final class GuestStore
                 'tableNumber'   => '',
                 'attendance'    => $attendance,
                 'submittedAt'   => self::now(),
+                'revealedAt'    => null,
             ];
 
             return [['guest' => self::present($uuid, $records[$uuid]), 'created' => true], $uuid];
@@ -254,6 +257,41 @@ final class GuestStore
     }
 
     /**
+     * Khách lấy mã bàn: ghi revealedAt chỉ khi đang chưa có; đã có => giữ nguyên, trả lại đúng record (idempotent).
+     * Kiểm tra và ghi nằm trong cùng lock nên hai tab bấm cùng lúc chỉ ghi revealedAt một lần.
+     * Chỉ khách đã xác nhận tham gia và đã được gán mã Lucky Draw + số bàn.
+     *
+     * @return array{status: string, guest: array, created: bool}|null
+     *         status 'revealed' | 'not_attending' | 'pending' (chưa có mã); created: lần này mới ghi revealedAt;
+     *         null khi không có khách
+     */
+    public function reveal(string $uuid): ?array
+    {
+        return $this->mutate(function (array &$records) use ($uuid): array {
+            $guest = self::lookupUuid($records, $uuid);
+
+            if ($guest === null) {
+                return [null, null];
+            }
+
+            $status = match (true) {
+                $guest['attendance'] !== self::ATTENDING => 'not_attending',
+                !canDownloadTicket($guest) => 'pending',
+                default => 'revealed',
+            };
+
+            if ($status !== 'revealed' || isTicketRevealed($guest)) {
+                return [['status' => $status, 'guest' => $guest, 'created' => false], null];
+            }
+
+            $key = $guest['uuid'];
+            $records[$key]['revealedAt'] = self::now();
+
+            return [['status' => $status, 'guest' => self::present($key, $records[$key]), 'created' => true], $key];
+        });
+    }
+
+    /**
      * Lý do record sai cấu trúc, hợp lệ => null. Dùng chung cho runtime và script migration.
      */
     public static function recordError(mixed $key, mixed $record): ?string
@@ -308,6 +346,10 @@ final class GuestStore
 
         if (isset($record['updatedAt']) && !self::isTimestamp($record['updatedAt'])) {
             return 'updatedAt không hợp lệ';
+        }
+
+        if (isset($record['revealedAt']) && !self::isTimestamp($record['revealedAt'])) {
+            return 'revealedAt không hợp lệ';
         }
 
         return null;
