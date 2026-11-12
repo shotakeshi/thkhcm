@@ -2,6 +2,8 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
+
 $event = loadEvent();
 $wantsJson = str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
 
@@ -32,7 +34,7 @@ if ($draft === '') {
         $guest = guestStore()->findByEmail($email);
         $found = $guest !== null ? invitation($guest) : null;
     } catch (RuntimeException $e) {
-        error_log('find-ticket.php: ' . $e->getMessage());
+        Logger::error($e);
         $status = 500;
         $error = messageRef('lookup.errors.failed');
     }

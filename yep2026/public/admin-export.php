@@ -7,6 +7,7 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
 use App\Rsvp\GuestStore;
 
 header('Referrer-Policy: no-referrer');
@@ -30,7 +31,7 @@ function csvCell(string $value): string
 try {
     $entries = array_map('invitation', guestStore()->all());
 } catch (RuntimeException $e) {
-    error_log('admin-export.php: ' . $e->getMessage());
+    Logger::error($e);
     http_response_code(500);
     header('Content-Type: text/plain; charset=utf-8');
     exit('Không đọc được dữ liệu khách, vui lòng thử lại sau.');

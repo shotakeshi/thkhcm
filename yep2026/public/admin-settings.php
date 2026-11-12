@@ -8,6 +8,7 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
 use App\Settings\Settings;
 
 header('X-Robots-Tag: noindex, nofollow');
@@ -27,7 +28,7 @@ if (!in_array($value, ['1', '0'], true)) {
 try {
     settings()->set(Settings::RSVP_ENABLED, $value === '1');
 } catch (RuntimeException $e) {
-    error_log('admin-settings.php: ' . $e->getMessage());
+    Logger::error($e, ['rsvpEnabled' => $value === '1']);
     respondJson(500, [
         'ok'          => false,
         'error'       => 'Không lưu được cài đặt, vui lòng thử lại sau',

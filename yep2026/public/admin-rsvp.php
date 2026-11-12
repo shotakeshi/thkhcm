@@ -10,6 +10,7 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
 use App\Rsvp\GuestStore;
 
 const ACTIONS = ['attendance', 'delete'];
@@ -90,10 +91,10 @@ try {
     $after = $action === 'delete' ? 'deleted' : $attendance;
 
     if ($before !== $after) {
-        error_log("admin-rsvp: khách {$uuid} {$before} -> {$after}");
+        Logger::info('Admin đổi xác nhận tham dự', ['uuid' => $uuid, 'from' => $before, 'to' => $after]);
     }
 } catch (RuntimeException $e) {
-    error_log('admin-rsvp.php: ' . $e->getMessage());
+    Logger::error($e, ['uuid' => $uuid, 'action' => $action]);
     respondJson(500, ['ok' => false, 'error' => 'Không lưu được xác nhận, vui lòng thử lại sau']);
 }
 

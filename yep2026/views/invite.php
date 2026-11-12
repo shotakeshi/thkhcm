@@ -228,28 +228,6 @@ $locationLabel = trim(message('invite.location_label'));
                         <?php endif; ?>
                     </div>
                 </div>
-
-                <?php if ($uuid === null): ?>
-                    <div class="invite-actions intro a-cta">
-                        <p class="invite-note">
-                            <svg
-                                class="invite-note-icon"
-                                aria-hidden="true"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.6"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <rect x="3" y="5" width="18" height="14" rx="2"/>
-                                <path d="M3.5 6.5l8.5 6 8.5-6"/>
-                            </svg>
-                        </p>
-                    </div>
-                <?php endif; ?>
             </section>
         </div>
     </section>

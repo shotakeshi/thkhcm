@@ -2,6 +2,8 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
+
 $event = loadEvent();
 $id = $_GET['id'] ?? '';
 $employee = null;
@@ -14,7 +16,7 @@ if ($id !== '') {
     try {
         $invitation = findInvitation($id);
     } catch (RuntimeException $e) {
-        error_log('index.php: ' . $e->getMessage());
+        Logger::error($e);
         $invitation = null;
         // Không đọc được dữ liệu: báo lỗi tạm thời thay vì báo link sai
         $noticeUnavailable = true;

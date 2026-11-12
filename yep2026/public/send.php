@@ -2,6 +2,7 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
 use App\Mail\Mailer;
 use App\Mail\MailTemplate;
 use App\Mail\SentLog;
@@ -49,7 +50,8 @@ function registerJsonErrorHandlers(): void
     set_exception_handler(function (Throwable $e): void {
         global $requestPhase;
 
-        error_log('send.php: ' . $e);
+        // Handler này thay handler của Logger nên tự ghi vào storage/logs
+        Logger::error($e, ['phase' => $requestPhase]);
         sendJson(500, errorResponse($requestPhase, 'Lỗi máy chủ'));
     });
 
@@ -64,7 +66,8 @@ function registerJsonErrorHandlers(): void
             return;
         }
 
-        error_log('send.php: ' . $error['message']);
+        // Fatal error đã được shutdown handler của Logger ghi; ghi thêm bước đang xử lý để trace
+        Logger::error('send.php dừng do fatal error', ['phase' => $requestPhase]);
 
         $message = str_contains($error['message'], 'Maximum execution time')
             ? 'Máy chủ SMTP không phản hồi sau ' . SEND_TIME_LIMIT . ' giây'
@@ -127,7 +130,7 @@ function readInviteUuid(string $email): string
     $uuid = employeeUuid(findEmployee($email) ?? []);
 
     if ($uuid === null) {
-        error_log("send.php: {$email} chưa có uuid hợp lệ trong data.json");
+        Logger::warning('Không gửi thư mời: email chưa có uuid hợp lệ trong data.json', ['email' => $email]);
         respondJson(422, [
             'ok' => false,
             'error' => 'Nhân viên chưa có trong danh sách khách mời hoặc thiếu mã thư mời',
@@ -135,7 +138,7 @@ function readInviteUuid(string $email): string
     }
 
     if (isset(findDuplicateValues(loadEmployees(), 'uuid')[$uuid])) {
-        error_log("send.php: uuid {$uuid} bị trùng với nhân viên khác");
+        Logger::warning('Không gửi thư mời: uuid bị trùng với nhân viên khác', ['email' => $email, 'uuid' => $uuid]);
         respondJson(422, [
             'ok' => false,
             'error' => 'Mã thư mời của nhân viên này bị trùng với nhân viên khác',
@@ -143,7 +146,7 @@ function readInviteUuid(string $email): string
     }
 
     if (appUrl() === '') {
-        error_log('send.php: chưa cấu hình APP_URL trong .env');
+        Logger::error('Không gửi thư mời: chưa cấu hình APP_URL trong .env');
         respondJson(422, ['ok' => false, 'error' => 'Hệ thống chưa cấu hình đường dẫn thư mời']);
     }
 

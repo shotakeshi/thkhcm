@@ -2,6 +2,7 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
 use App\Rsvp\GuestStore;
 
 $event = loadEvent();
@@ -31,7 +32,7 @@ if ($id !== '') {
     try {
         $invitation = findInvitation($id);
     } catch (RuntimeException $e) {
-        error_log('rsvp.php: ' . $e->getMessage());
+        Logger::error($e);
         $status = 500;
         $errors['form'] = messageRef('rsvp.errors.save_failed');
     }
@@ -82,7 +83,7 @@ if ($errors === []) {
             ? guestStore()->submitByUuid($invitation['uuid'], $draft['attendance'])
             : guestStore()->submitByEmail($email, $name, $draft['attendance']);
     } catch (RuntimeException $e) {
-        error_log('rsvp.php: ' . $e->getMessage());
+        Logger::error($e);
         $status = 500;
         $errors['form'] = messageRef('rsvp.errors.save_failed');
     }

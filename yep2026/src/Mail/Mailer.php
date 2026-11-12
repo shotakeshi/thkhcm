@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Log\Logger;
 use PHPMailer\PHPMailer\PHPMailer;
 use RuntimeException;
 
@@ -61,7 +62,7 @@ class Mailer
             return $mail->send();
         } catch (\Throwable $e) {
             $this->lastError = $e->getMessage();
-            error_log('Mail sending failed: ' . $e->getMessage());
+            Logger::error($e, ['to' => $to]);
 
             return false;
         }

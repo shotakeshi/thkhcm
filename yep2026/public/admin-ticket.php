@@ -11,6 +11,8 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
+
 const TICKET_MAX_LENGTH = 50;
 
 header('X-Robots-Tag: noindex, nofollow');
@@ -86,7 +88,7 @@ try {
     $result = guestStore()->updateTicket($uuid, $ticket, $expected);
     $html = ticketRowHtml(guestStore()->findByUuid($uuid));
 } catch (RuntimeException $e) {
-    error_log('admin-ticket.php: ' . $e->getMessage());
+    Logger::error($e, ['uuid' => $uuid]);
     respondJson(500, ['ok' => false, 'error' => 'Không lưu được vé, vui lòng thử lại sau']);
 }
 
@@ -106,14 +108,11 @@ match ($result) {
 };
 
 if ($result === 'saved') {
-    error_log(sprintf(
-        'admin-ticket: khách %s luckyDrawCode "%s" -> "%s", tableNumber "%s" -> "%s"',
-        $uuid,
-        $expected['luckyDrawCode'],
-        $ticket['luckyDrawCode'],
-        $expected['tableNumber'],
-        $ticket['tableNumber']
-    ));
+    Logger::info('Admin cập nhật vé', [
+        'uuid'          => $uuid,
+        'luckyDrawCode' => ['from' => $expected['luckyDrawCode'], 'to' => $ticket['luckyDrawCode']],
+        'tableNumber'   => ['from' => $expected['tableNumber'], 'to' => $ticket['tableNumber']],
+    ]);
 }
 
 respondJson(200, ['ok' => true, 'html' => $html]);

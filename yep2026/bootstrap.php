@@ -104,7 +104,7 @@ function isRsvpEnabled(): bool
     try {
         $saved = settings()->all()[\App\Settings\Settings::RSVP_ENABLED] ?? null;
     } catch (RuntimeException $e) {
-        error_log('isRsvpEnabled: ' . $e->getMessage());
+        \App\Log\Logger::warning($e, ['fallback' => 'RSVP_ENABLED trong .env']);
         $saved = null;
     }
 
@@ -524,13 +524,13 @@ function message(string $key, array $replace = [], ?string $locale = null): stri
     $value = findMessage($key, $locale);
 
     if ($value === null) {
-        error_log("message: thiếu khoá {$key} trong lang/");
+        \App\Log\Logger::warning('Thiếu khoá trong lang/', ['key' => $key, 'locale' => $locale]);
 
         return $key;
     }
 
     if ($locale !== DEFAULT_LOCALE && !is_string(translationValue($key, $locale))) {
-        error_log("message: lang/{$locale} thiếu khoá {$key}, dùng bản " . DEFAULT_LOCALE);
+        \App\Log\Logger::notice('Thiếu khoá trong lang/, dùng bản ' . DEFAULT_LOCALE, ['key' => $key, 'locale' => $locale]);
     }
 
     $pairs = [];
@@ -647,7 +647,14 @@ function flattenMessages(array $messages, string $prefix = ''): array
 
 // ===== Khởi động =====
 
+// Ghi PHP error, exception chưa catch và fatal error vào storage/logs/error-YYYY-MM-DD.log (src/Log/Logger.php)
+\App\Log\Logger::register(STORAGE_PATH . '/logs');
+
 loadEnv(BASE_PATH . '/.env');
+
+// Không hiện lỗi (đường dẫn, stack trace) cho người dùng; chi tiết đã có trong log. Dev: APP_DEBUG=true trong .env
+ini_set('display_errors', filter_var(getenv('APP_DEBUG'), FILTER_VALIDATE_BOOLEAN) ? '1' : '0');
+ini_set('log_errors', '1');
 
 date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Ho_Chi_Minh');
 

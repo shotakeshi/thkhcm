@@ -2,6 +2,8 @@
 
 require dirname(__DIR__) . '/bootstrap.php';
 
+use App\Log\Logger;
+
 header('Referrer-Policy: no-referrer');
 header('X-Robots-Tag: noindex, nofollow');
 
@@ -19,7 +21,7 @@ try {
     $invalidRecords = guestStore()->invalidRecords();
     $employees = loadEmployees();
 } catch (RuntimeException $e) {
-    error_log('admin.php: ' . $e->getMessage());
+    Logger::error($e);
     http_response_code(500);
     header('Content-Type: text/plain; charset=utf-8');
     exit('Không đọc được dữ liệu khách, vui lòng thử lại sau.');
@@ -39,7 +41,7 @@ $sentLogError = null;
 try {
     $sent = sentLog()->all();
 } catch (RuntimeException $e) {
-    error_log('admin.php: ' . $e->getMessage());
+    Logger::error($e);
     $sent = [];
     $sentLogError = $e->getMessage();
 }
@@ -168,7 +170,7 @@ $peopleHead = '<div class="people-head" aria-hidden="true">'
                     <?= $rsvpEnabled ? 'checked' : '' ?>
                 >
                 <span class="form-check-label">
-                    Form xác nhận tham dự và tra cứu vé trên trang chính:
+                    Form xác nhận tham dự và tra cứu vé:
                     <strong id="rsvpEnabledState"><?= $rsvpEnabled ? 'Đang mở' : 'Đang ẩn' ?></strong>
                 </span>
             </label>

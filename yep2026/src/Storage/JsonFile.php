@@ -2,6 +2,7 @@
 
 namespace App\Storage;
 
+use App\Log\Logger;
 use JsonException;
 use RuntimeException;
 
@@ -67,7 +68,9 @@ class JsonFile
             $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             throw new RuntimeException(
-                ucfirst($this->label) . " bị hỏng ({$this->path}): " . $e->getMessage()
+                ucfirst($this->label) . " bị hỏng ({$this->path}): " . $e->getMessage(),
+                0,
+                $e
             );
         }
 
@@ -115,7 +118,7 @@ class JsonFile
             && function_exists('posix_geteuid')
             && fileowner($this->path) !== posix_geteuid()
         ) {
-            error_log("JsonFile: owner của {$this->path} khác user đang chạy PHP, rename sẽ đổi owner");
+            Logger::warning('Owner của file khác user đang chạy PHP, rename sẽ đổi owner', ['path' => $this->path]);
         }
     }
 
@@ -196,7 +199,7 @@ class JsonFile
             // Nội dung sắp ghi phải parse lại được, không thì không thay file cũ
             json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
-            throw new RuntimeException("Không encode được {$this->label}: " . $e->getMessage());
+            throw new RuntimeException("Không encode được {$this->label}: " . $e->getMessage(), 0, $e);
         }
 
         $tmp = $this->path . '.' . bin2hex(random_bytes(6)) . '.tmp';
