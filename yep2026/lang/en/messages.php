@@ -90,6 +90,13 @@ return [
         ],
     ],
 
+    'attendees' => [
+        'label'       => 'Attendees',
+        'title'       => 'Attendees',
+        'count_label' => 'Confirmed',
+        'empty'       => 'No confirmed attendees yet.',
+    ],
+
     'program' => [
         'label'            => 'Program',
         'title'            => 'Event Schedule',

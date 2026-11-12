@@ -1,10 +1,64 @@
 {
+    "a40ebf2a-5f70-4857-9b73-9427fbb1493f": {
+        "guestType": "0",
+        "name": "Noguchi Yuta",
+        "email": "noguchi@core-tech.jp",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "6bda254a-bf0d-404f-997d-3f7b8de4b345": {
+        "guestType": "0",
+        "name": "Nguyễn Uyên Phương Anh",
+        "email": "n_phuonganh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "e663a4ac-251d-43b6-a1a0-f36e7dbe0073": {
+        "guestType": "0",
+        "name": "Đặng Ngọc Thu",
+        "email": "d_ngocthu@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "86d6ac08-7b5a-49e0-b06f-651ca98415c2": {
+        "guestType": "0",
+        "name": "Nguyễn Đinh Duy",
+        "email": "n_dinhduy@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
     "c3e7b7e9-d813-40bd-bd8f-53421235f6f1": {
         "guestType": "0",
         "name": "Phạm Quốc Thắng",
         "email": "p_quocthang@thk-hd.vn",
         "luckyDrawCode": "YEP26-1111",
-        "tableNumber": "01",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "fe4763b9-6ef2-4735-b08f-fdcd06f0f209": {
+        "guestType": "0",
+        "name": "Phạm Nguyễn Ngọc Nhân",
+        "email": "p_ngocnhan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "93c7f962-6031-4ffc-89de-34c2fe84ad78": {
+        "guestType": "0",
+        "name": "Võ Tiến Toàn",
+        "email": "v_tientoan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
         "attendance": null,
         "submittedAt": null
     },
@@ -13,7 +67,646 @@
         "name": "Hà Anh Hiếu",
         "email": "h_anhhieu@thk-hd.vn",
         "luckyDrawCode": "YEP26-2103",
-        "tableNumber": "02",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "f86f8444-dcec-4fe8-b9b2-9eae74685ef0": {
+        "guestType": "0",
+        "name": "Ngô Cẩm Tân",
+        "email": "n_camtan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "17895d19-674d-4245-b805-76cf822364a5": {
+        "guestType": "0",
+        "name": "Nguyễn Thành Thức",
+        "email": "n_thanhthuc@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "b765f38a-5bad-46a7-ac2b-ba2a3d221435": {
+        "guestType": "0",
+        "name": "Phan Đăng Ý",
+        "email": "p_dangy@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "6fb0d2c3-118d-4282-9641-df057b07821b": {
+        "guestType": "0",
+        "name": "Phạm Văn Nam",
+        "email": "p_vannam@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "4ee44a22-8bc2-4f97-9ddf-07504f32ace8": {
+        "guestType": "0",
+        "name": "Đào Khánh Ngân",
+        "email": "d_khanhngan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "2a27d17c-f080-4d20-a9b6-43933c81d11c": {
+        "guestType": "0",
+        "name": "Trần Thái Minh Trí",
+        "email": "t_minhtri@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "2e3c75a9-d2e9-4477-a3d1-03b5c6f81255": {
+        "guestType": "0",
+        "name": "Từ Quốc Tuấn",
+        "email": "t_quoctuan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "680eb79f-e526-4d33-8fa1-da95afaca500": {
+        "guestType": "0",
+        "name": "Trương Hoàng Nam",
+        "email": "t_hoangnam@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "31b70771-249b-487c-a3e5-a1f99387dda4": {
+        "guestType": "0",
+        "name": "Phùng Hoài Bảo",
+        "email": "p_hoaibao@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "dae2c5a7-4bd2-4e36-bbb0-517ab25aa7ca": {
+        "guestType": "0",
+        "name": "Nguyễn Văn Nhàn",
+        "email": "n_vannhan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "f5d8c97f-5c8f-4cda-8b20-c5c66fd8a92f": {
+        "guestType": "0",
+        "name": "Đinh Hiếu Trọng",
+        "email": "d_hieutrong@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "dd9581aa-2ec7-4e86-ad03-563904b64025": {
+        "guestType": "0",
+        "name": "Nguyễn Đức Khang",
+        "email": "n_duckhang@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "3ef982fa-0581-43d5-a7dd-0ab8366c10d1": {
+        "guestType": "0",
+        "name": "Chung Hiếu Nghĩa",
+        "email": "c_hieunghia@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "ed8a566e-f88b-4dcc-90cb-c8f634e292b4": {
+        "guestType": "0",
+        "name": "Nguyễn Thanh Đức",
+        "email": "n_thanhduc@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "848dbd53-1abd-4ad3-9edf-dac0ed767a72": {
+        "guestType": "0",
+        "name": "Mai Thùy Nhi",
+        "email": "m_thuynhi@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "b68c53f8-cd86-40fb-be28-8041f7e867f1": {
+        "guestType": "0",
+        "name": "Lý Long Đức",
+        "email": "l_longduc@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "a4e065f0-eebc-457d-8aed-473fdfbb62b7": {
+        "guestType": "0",
+        "name": "Dương Quốc Huy",
+        "email": "d_quochuy@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "85ea329d-2ed9-444b-b1f2-36f201dbc821": {
+        "guestType": "0",
+        "name": "Lâm Nhựt Nam",
+        "email": "l_nhutnam@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "d7914c87-1b0c-4b47-87c8-4285d4b5a559": {
+        "guestType": "0",
+        "name": "Nguyễn Trần Phúc Thịnh",
+        "email": "n_phucthinh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "87ad28f2-d41b-4ca9-bd5b-475833fd3a1f": {
+        "guestType": "0",
+        "name": "Nguyễn Thanh Phong",
+        "email": "n_thanhphong@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "0b8d528a-8bd1-44a3-a521-75aaea7302b9": {
+        "guestType": "0",
+        "name": "Trần Hồ Trúc Anh",
+        "email": "t_trucanh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "681893e7-1fc9-45a1-a35f-0e11aa978b2b": {
+        "guestType": "0",
+        "name": "Nguyễn Trường An",
+        "email": "n_truongan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "541287ba-6b1a-4a8b-9706-aadc026c9add": {
+        "guestType": "0",
+        "name": "Lê Đắc Khánh Trình",
+        "email": "l_khanhtrinh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "834229ca-1965-4cdb-958e-b20e52c27dd2": {
+        "guestType": "0",
+        "name": "Nguyễn Hoài Ái",
+        "email": "n_hoaiai@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "bb568d6f-397e-4e7f-9ebe-0c379fe483a1": {
+        "guestType": "0",
+        "name": "Cao Nhật Khang",
+        "email": "c_nhatkhang@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "7e183f51-62d7-4db8-a608-ab7c1a358101": {
+        "guestType": "0",
+        "name": "Nguyễn Thị Mai Linh",
+        "email": "n_mailinh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "680c38bc-8eb0-4f52-b086-b132f0a7813a": {
+        "guestType": "0",
+        "name": "Trần Thị Hương Giang",
+        "email": "t_huonggiang@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "118e9e4e-cf32-4840-ab0b-5af21ad54053": {
+        "guestType": "0",
+        "name": "Lê Quang Hiếu",
+        "email": "l_quanghieu@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "82ca267b-2be9-4a54-b27d-56cfc10a632e": {
+        "guestType": "0",
+        "name": "Trương Văn Thương",
+        "email": "t_vanthuong@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "aa35f63e-3059-44db-b155-8a9aa5e2ea8d": {
+        "guestType": "0",
+        "name": "Nguyễn Trần Phi Huy",
+        "email": "n_phihuy@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "c591a5e4-c605-4807-91b9-8ec8426fbe5d": {
+        "guestType": "0",
+        "name": "Đặng Thị Như",
+        "email": "d_thinhu@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "7a42d898-5d09-4ab1-a0a6-d7c081660e91": {
+        "guestType": "0",
+        "name": "Nguyễn Thị Thùy Duyên",
+        "email": "n_thuyduyen@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "0d80590a-6782-46f4-ba89-0ae35b72d774": {
+        "guestType": "0",
+        "name": "Phạm Nguyên Nam",
+        "email": "p_nguyennam@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "adcc333f-cccb-47a6-94fb-55d03fe47c8a": {
+        "guestType": "0",
+        "name": "Trần Thanh Loan",
+        "email": "t_thanhloan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "dfd758b1-b493-4727-9f22-aa5607eaa666": {
+        "guestType": "0",
+        "name": "Lại Ngọc Thủy Tiên",
+        "email": "l_thuytien@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "deb67414-52d9-4b12-8759-fedd49c8726b": {
+        "guestType": "0",
+        "name": "Lâm Thành Trung",
+        "email": "l_thanhtrung@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "ba2aa1e3-f998-45b2-8d27-fcacc5af6dd5": {
+        "guestType": "0",
+        "name": "Nguyễn Thanh Phong",
+        "email": "nguyen_tphong@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "a0e7e9a5-a8c1-4260-9b3a-e6c9713182f4": {
+        "guestType": "0",
+        "name": "Phạm Thanh Thảo",
+        "email": "p_thanhthao@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "a19218c9-62af-446d-b7d2-7b5219b52bb4": {
+        "guestType": "0",
+        "name": "Hàng Minh An",
+        "email": "h_minhan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "5b0c5b63-a66b-48b4-bf25-ee97220cb133": {
+        "guestType": "0",
+        "name": "Trần Ngọc Thành",
+        "email": "t_ngocthanh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "2d3a49a9-0248-4d10-91e2-fed434356408": {
+        "guestType": "0",
+        "name": "Vương Kỳ Binh",
+        "email": "v_kybinh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "30e205d3-f991-45ef-83de-ab8c6de4291f": {
+        "guestType": "0",
+        "name": "Nguyễn Huy Dũng",
+        "email": "n_huydung@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "de3aeccf-633b-4c22-9902-bd4282220270": {
+        "guestType": "0",
+        "name": "Bạch Minh Tuyên",
+        "email": "b_minhtuyen@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "34dde101-24e0-40df-b912-845940320f95": {
+        "guestType": "0",
+        "name": "Huỳnh Thị Thanh Vân",
+        "email": "h_thanhvan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "50359d46-c79a-449a-8f2c-8f585f3b5c84": {
+        "guestType": "0",
+        "name": "Ngô Trường Khải",
+        "email": "n_truongkhai@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "aebfd817-ca1b-4c6d-9aff-1e88ddc5dd6d": {
+        "guestType": "0",
+        "name": "Nguyễn Thị Khánh Vy",
+        "email": "n_khanhvy@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "273e6bf1-fda0-4a72-ba4c-3e855aecd736": {
+        "guestType": "0",
+        "name": "Lê Quốc Dũng",
+        "email": "l_quocdung@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "53108b40-2709-4c39-8f31-d641650474da": {
+        "guestType": "0",
+        "name": "Trịnh Gia Thanh",
+        "email": "t_giathanh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "2641a31e-a001-4eee-abe2-1c3869438b8f": {
+        "guestType": "0",
+        "name": "Nguyễn Thị Diễm Kiều",
+        "email": "n_diemkieu@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "71aa883e-cf94-4a4f-8782-9ed887060c6d": {
+        "guestType": "0",
+        "name": "Trần Văn Tư",
+        "email": "t_vantu@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "6488f590-9ed2-45c4-bbe8-060a3649dc31": {
+        "guestType": "0",
+        "name": "Nguyễn Đình Khôi Nguyên",
+        "email": "n_khoinguyen@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "b083e032-08e1-44db-8404-37aa625db982": {
+        "guestType": "0",
+        "name": "Trịnh Hoàng Long",
+        "email": "t_hoanglong@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "64010475-d80e-4679-b5ae-1f11644f60f4": {
+        "guestType": "0",
+        "name": "Nguyễn Phúc Thịnh",
+        "email": "nguyen_pthinh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "a5f863a8-066e-47b2-b775-d5d278ae85da": {
+        "guestType": "0",
+        "name": "Tạ Kiều Ngân",
+        "email": "t_kieungan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "4e9ca2a7-8347-491b-8a38-1c40116f4a53": {
+        "guestType": "0",
+        "name": "Lê Mộc Trầm",
+        "email": "l_moctram@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "f7c7d82f-c258-4ca5-a49c-9ecbff60df95": {
+        "guestType": "0",
+        "name": "Trần Sỹ Tuyên",
+        "email": "t_sytuyen@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "37cd25c5-a7e6-4309-8f58-64ef71bb951b": {
+        "guestType": "0",
+        "name": "Nguyễn Châu Phát Tài",
+        "email": "n_phattai@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "e5ce6d7d-dfe6-422d-af91-1cffac73cbfb": {
+        "guestType": "0",
+        "name": "Nguyễn Hoàng Vũ",
+        "email": "n_hoangvu@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "247fc1aa-8151-4db2-b7d7-a3077a061162": {
+        "guestType": "0",
+        "name": "Trần Hữu Mỹ",
+        "email": "t_huumy@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "4974d701-b0fe-485a-a31d-4fad0b55f417": {
+        "guestType": "0",
+        "name": "Trần Tuấn Anh",
+        "email": "t_tuananh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "952ee653-ecaf-4f8f-83be-c6c4c7326538": {
+        "guestType": "0",
+        "name": "Nguyễn Văn Hiệp",
+        "email": "n_vanhiep@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "a84564e9-4d66-42db-9fde-cb621fb379bc": {
+        "guestType": "0",
+        "name": "Vũ Anh Tuấn",
+        "email": "v_anhtuan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "c0d5ece2-7353-437f-b088-6f85f37856fe": {
+        "guestType": "0",
+        "name": "Lê Hữu Dương",
+        "email": "l_huuduong@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "df6ade21-eaa7-49ea-b613-e141c565e0ef": {
+        "guestType": "0",
+        "name": "Phan Nhật Tân",
+        "email": "p_nhattan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "53345c14-74d5-48cf-b268-b328530ccad8": {
+        "guestType": "0",
+        "name": "Nguyễn Thị Hồng Huệ",
+        "email": "n_honghue@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "35d7616f-2100-4571-b6bf-48be19738eaf": {
+        "guestType": "0",
+        "name": "Nguyễn Thanh Bình",
+        "email": "n_thanhbinh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "6bab3b6f-0e7c-46a7-bf45-c1d584da7219": {
+        "guestType": "0",
+        "name": "Nguyễn Thanh Nhân",
+        "email": "n_thanhnhan@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "2a89dd48-a0b0-4354-91c1-dcb45ac5aa27": {
+        "guestType": "0",
+        "name": "Nguyễn Thị Mỹ Nữ",
+        "email": "n_mynu@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "afdf9a9e-3cba-4f16-b955-283dd7356ebe": {
+        "guestType": "0",
+        "name": "Lê Thị Thanh Thảo",
+        "email": "l_thanhthao@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "6c9a0c21-52d8-47a1-b29d-f1455e52780c": {
+        "guestType": "0",
+        "name": "Trần Ngọc Khánh Quỳnh",
+        "email": "t_khanhquynh@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
+        "attendance": null,
+        "submittedAt": null
+    },
+    "e5b5e458-23cd-46ae-8b42-6880bc8f6f62": {
+        "guestType": "0",
+        "name": "Đặng Nguyễn Minh Tâm",
+        "email": "d_minhtam@thk-hd.vn",
+        "luckyDrawCode": "",
+        "tableNumber": "",
         "attendance": null,
         "submittedAt": null
     }

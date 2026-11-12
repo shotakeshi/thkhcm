@@ -260,6 +260,7 @@ $rsvpEnabled = isRsvpEnabled();
         ]) ?>
     </div>
 
+    <?php require __DIR__ . '/partials/attendees.php'; ?>
     <?php require __DIR__ . '/partials/schedule.php'; ?>
 </div>
 

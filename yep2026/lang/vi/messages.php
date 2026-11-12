@@ -104,8 +104,12 @@ return [
         ],
     ],
 
-    // Vé (trên trang, ảnh vé tải về, toast) luôn tiếng Anh ở mọi ngôn ngữ, không nằm ở đây:
-    // views/partials/ticket.php và public/js/ticket.js
+    'attendees' => [
+        'label'       => 'Người tham gia',
+        'title'       => 'Danh sách tham gia',
+        'count_label' => 'Đã xác nhận',
+        'empty'       => 'Chưa có người xác nhận tham gia.',
+    ],
 
     // Section Chương trình. Giờ từng mốc nằm ở config/event.php (program.schedule), tên mốc ở items theo 'key'
     'program' => [

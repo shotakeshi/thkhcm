@@ -845,7 +845,8 @@ img.brand {
     box-shadow: 0 0 0 1px var(--color-primary), 0 6px 18px rgba(0, 0, 0, .35);
 }
 
-.page-schedule .stage {
+.page-schedule .stage,
+.page-attendees .stage {
     display: flex;
     align-items: center;
     height: auto;
@@ -855,6 +856,10 @@ img.brand {
 
 .program {
     --program-pad: 10px;
+    --program-title-size: min(
+        calc(var(--text-section-title) * 1.2),
+        calc(min(100vw - 2 * var(--gutter), 520px) * .12 / var(--s, 1))
+    );
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -906,7 +911,7 @@ img.brand {
     display: block;
     margin-top: -.5em;
     font-family: var(--font-script), var(--font-heading);
-    font-size: calc(var(--text-section-title) * 1.2);
+    font-size: var(--program-title-size);
     font-weight: 400;
     letter-spacing: 0;
     color: var(--color-text);
@@ -982,7 +987,7 @@ img.brand {
 
 .program-dress-label {
     margin: 0;
-    font-size: calc(var(--text-section-title) * 1.2);
+    font-size: var(--program-title-size);
     font-family: var(--font-script), var(--font-heading);
     font-weight: 400;
     line-height: var(--line-height-heading);
@@ -1013,8 +1018,82 @@ img.brand {
     box-shadow: 0 0 0 1.5px var(--color-surface-border), 0 6px 14px -4px rgba(0, 0, 0, .55);
 }
 
+.attendees {
+    min-height: 0;
+}
+
+.attendee-list {
+    max-height: 420px;
+    margin: var(--space-title-content) 0 0;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    /* Chừa chỗ cho thanh cuộn để không đè lên cột giờ */
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-surface-border) transparent;
+    list-style: none;
+}
+
+/* story.js đặt --attendees-max = chiều cao khung Lịch trình; vượt quá thì list cuộn bên trong.
+   Không có JS hoặc không có Lịch trình => dùng max-height cố định của .attendee-list ở trên. */
+.attendees.is-capped {
+    max-height: var(--attendees-max);
+}
+
+.attendees.is-capped .program-body {
+    min-height: 0;
+}
+
+.attendees.is-capped .attendee-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+}
+
+.attendee-empty {
+    margin: var(--space-title-content) 0 0;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--hairline);
+    font-size: var(--text-body);
+    color: var(--color-text-muted);
+}
+
+.attendee-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--hairline);
+    font-size: var(--text-body);
+}
+
+.attendee-number {
+    flex-shrink: 0;
+    min-width: 2ch;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--color-text-highlight);
+}
+
+.attendee-name {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.attendee-time {
+    flex-shrink: 0;
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+}
+
 @media (min-width: 641px) {
-    .page-schedule .stage {
+    .page-schedule .stage,
+    .page-attendees .stage {
         justify-content: center;
         width: 100%;
         min-height: 100vh;
@@ -1025,6 +1104,10 @@ img.brand {
 
     .program {
         --program-pad: 12px;
+        --program-title-size: min(
+            calc(var(--text-section-title) * 1.2),
+            calc(min(100vw - 2 * var(--gutter), 520px) * .12)
+        );
         max-width: var(--container-max);
         min-height: clamp(520px, 72vh, 720px);
         margin-inline: auto;
@@ -1044,6 +1127,14 @@ img.brand {
 
     .program-swatches {
         gap: var(--space-4);
+    }
+
+    .attendees {
+        min-height: 0;
+    }
+
+    .attendee-list {
+        max-height: 60vh;
     }
 
     .program-swatch {

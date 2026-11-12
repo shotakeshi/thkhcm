@@ -313,8 +313,31 @@
         });
     }
 
+    function initAttendeesHeight() {
+        const box = document.querySelector('.page-attendees .attendees');
+        const schedule = document.querySelector('.page-schedule .program');
+
+        if (!box || !schedule || !('ResizeObserver' in window)) {
+            return;
+        }
+
+        const sync = () => {
+            const scale = box.offsetWidth ? box.getBoundingClientRect().width / box.offsetWidth : 1;
+            const height = schedule.getBoundingClientRect().height / (scale || 1);
+
+            if (height > 0) {
+                box.style.setProperty('--attendees-max', `${Math.round(height)}px`);
+                box.classList.add('is-capped');
+            }
+        };
+
+        sync();
+        new ResizeObserver(sync).observe(schedule);
+    }
+
     initReveal();
     initLight();
     initScrollEffects();
     initAsyncForms();
+    initAttendeesHeight();
 })();
