@@ -145,9 +145,9 @@
         "email": "t_quoctuan@thk-hd.vn",
         "luckyDrawCode": "YEP26-0316",
         "tableNumber": "8.9",
-        "attendance": null,
-        "submittedAt": null,
-        "revealedAt": null
+        "attendance": "attending",
+        "submittedAt": "2026-11-17T10:24:47+07:00",
+        "revealedAt": "2026-11-17T10:24:51+07:00"
     },
     "680eb79f-e526-4d33-8fa1-da95afaca500": {
         "guestType": "0",
@@ -785,8 +785,8 @@
         "email": "d_minhtam@thk-hd.vn",
         "luckyDrawCode": "YEP26-7086",
         "tableNumber": "6.9",
-        "attendance": null,
-        "submittedAt": null,
-        "revealedAt": null
+        "attendance": "attending",
+        "submittedAt": "2026-11-17T11:19:43+07:00",
+        "revealedAt": "2026-11-17T11:19:47+07:00"
     }
 }
