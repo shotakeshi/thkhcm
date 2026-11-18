@@ -247,11 +247,11 @@ $rsvpEnabled = isRsvpEnabled();
 <div class="scene">
     <?php if ($rsvpEnabled): ?>
         <?php require __DIR__ . '/partials/rsvp.php'; ?>
-        <?php if ($employee === null): ?>
-            <?= renderPartial('seam.php') ?>
-            <?php require __DIR__ . '/partials/find-ticket.php'; ?>
-        <?php endif; ?>
     <?php endif; ?>
+	<?php if ($employee === null): ?>
+		<?= renderPartial('seam.php') ?>
+		<?php require __DIR__ . '/partials/find-ticket.php'; ?>
+	<?php endif; ?>
     <div id="ve" data-ticket-slot>
         <?= renderPartial('ticket-slot.php', [
             'event' => $event,

@@ -170,7 +170,7 @@ $peopleHead = '<div class="people-head" aria-hidden="true">'
                     <?= $rsvpEnabled ? 'checked' : '' ?>
                 >
                 <span class="form-check-label">
-                    Form xác nhận tham dự và tra cứu vé:
+                    Form xác nhận tham dự:
                     <strong id="rsvpEnabledState"><?= $rsvpEnabled ? 'Đang mở' : 'Đang ẩn' ?></strong>
                 </span>
             </label>
