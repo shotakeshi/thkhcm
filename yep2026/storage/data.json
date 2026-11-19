@@ -525,9 +525,9 @@
         "email": "n_truongkhai@thk-hd.vn",
         "luckyDrawCode": "YEP26-1895",
         "tableNumber": "1.1",
-        "attendance": null,
-        "submittedAt": null,
-        "revealedAt": null
+        "attendance": "attending",
+        "submittedAt": "2026-11-18T11:19:43+07:00",
+        "revealedAt": "2026-11-18T11:19:47+07:00"
     },
     "aebfd817-ca1b-4c6d-9aff-1e88ddc5dd6d": {
         "guestType": "0",
